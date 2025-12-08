@@ -1,0 +1,521 @@
+/*------------------General--------------------*/
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+:root{
+  --secondary-color: #00b1d3; 
+  --main-color: rgb(3,27,78);
+  --sec2:#CAF3F9;
+  --bg:#EDF5FB;
+  --grey-text:#676767;
+  --dark-text:#5A5A5A;
+  --App-bg:#FCFDFF;
+  --hover-btn-dark:rgb(20, 55, 130);
+  --hover-btn-secondary: #2ccfee;
+}
+
+*{ box-sizing: border-box; }
+body, html {
+  font-family: 'Poppins', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  margin: 0;
+  padding: 0;
+}
+/*------------------Header--------------------*/
+h1{
+  font-weight: 600;
+  font-size: 3rem;
+}
+/* ---------------- Header Cards ---------------- */
+.box1,.box3{
+  background-color: #BBC6DC;
+  color: var(--main-color);
+}
+.box2{
+  background-color: var(--sec2);
+  color: var(--secondary-color);
+}
+.box1,.box2,.box3{
+  padding: 5px;
+  border-radius: 4px;
+}
+.header-cards p{
+  color: var(--grey-text);
+}
+.card1 button,.card3 button{
+  background-color: var(--main-color);
+  border-radius: 12px;
+  border: none;
+  color: white;
+  transition: all .4s;
+}
+.card1 button:hover,.card3 button:hover{
+  background-color: var(--hover-btn-dark);
+  color: white;
+}
+.card2 button:hover{
+  background-color: var(--hover-btn-secondary);
+}
+.card2 button{
+  background-color: var(--secondary-color);
+  color: black;
+  border: none;
+  transition: all .4s;
+  border-radius: 12px;
+}
+.header-cards {
+  position: relative;
+  transform: translateY(-80px); 
+  z-index: 5;
+}
+.card1,.card2,.card3{
+  transition: transform .22s ease, box-shadow .22s ease;
+}
+.card1:hover,.card2:hover,.card3:hover{
+  transform: translateY(-6px);
+}
+
+
+.header-cards .col-10,
+.header-cards .col-md-4 {
+  display: flex;
+}
+
+.header-cards .col-10 > div,
+.header-cards .col-md-4 > div {
+  flex: 1;
+  height: 100%;
+}
+
+@media (max-width: 480px) {
+  .header h1 {
+    font-size: 1.7rem;
+  }
+  .header p {
+    font-size: 0.7rem;
+  }
+}
+/* SM — 576px */
+@media (min-width: 576px) {
+  .header h1 {
+    font-size: 2.2rem;
+  }
+  .header p {
+    font-size: .8rem;
+  }
+}
+
+/* MD — 768px */
+@media (min-width: 768px) {
+  .header h1 {
+    font-size: 2.3rem;
+  }
+  .header p {
+    font-size: 1.15rem;
+  }
+}
+@media (min-width: 992px) {
+  .header-cards {
+    transform: translateY(-90px);
+  }
+}
+
+
+/* --------------WHY CHOOSE US-------------- */
+.whyChoose{
+  background-color: var(--bg) ;
+}
+.whyChoose span{
+  color: var(--secondary-color);
+}
+.whyChoose i{
+  font-size: 20px;
+}
+.icon1,.icon2,.icon3{
+  width: fit-content;
+  margin: auto;
+  border-radius: 50%;
+  padding: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+  transition: box-shadow .5s;
+}
+.icon1:hover{
+  box-shadow: 0px 6px 20px #BBC6DC;
+}
+.icon2:hover{
+  box-shadow: 0px 6px 20px #C4A23C;
+}
+.icon3:hover{
+  box-shadow: 0px 6px 20px #4CC9E1;
+}
+.icon1{
+  background-color: #BBC6DC;
+}
+.icon2{
+  background-color: #F0F1D5;
+  color: #C4A23C;
+}
+.icon3{
+  background-color: #CAF3F9;
+  color: #4CC9E1;
+}
+.whyChoose h6{
+  font-weight: 600;
+  font-size: large;
+}
+.whyChoose .col-md-4 p {
+  font-weight: 400;
+  font-size: medium;
+  color: var(--grey-text);
+}
+.whyChoose .prag{
+  color: var(--grey-text) !important;
+  line-height: 27px !important;
+  font-weight: 500 !important;
+}
+/* ---------------- MEDICAL EQUIPMENT RENTAL ---------------- */
+.equipment-rental button{
+   color:white;
+   background-color: var(--main-color);
+   transition: all .4s;
+}
+.equipment-rental button:hover{
+  color: white;
+  background-color: var(--hover-btn-dark);
+}
+.equipment-rental p{
+  color: var(--grey-text);
+}
+.custom-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.custom-list li {
+  position: relative;
+  padding-left: 30px;  
+  margin-bottom: 12px;
+}
+
+.custom-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--secondary-color) 30%, #CAF3F9 40%);
+}
+
+
+
+@media (max-width: 480px) {
+  .equipment-rental h3 {
+    font-size: 1.3rem;
+  }
+  .equipment-rental p,
+  .equipment-rental li {
+    font-size: 0.9rem;
+  }
+
+  .equipment-rental img {
+    width: 100% !important;
+  }
+}
+@media (min-width: 576px) {
+  .equipment-rental h3 {
+    font-size: 1.5rem;
+  }
+  .equipment-rental p,
+  .equipment-rental li {
+    font-size: 1rem;
+  }
+}
+@media (min-width: 768px) {
+  .equipment-rental h3 {
+    font-size: 1.8rem;
+  }
+
+  .equipment-rental img {
+    width: 380px !important;
+  }
+}
+@media (min-width: 992px) {
+  .equipment-rental h3 {
+    font-size: 2rem;
+  }
+
+  .equipment-rental img {
+    width: 440px !important;
+  }
+}
+@media (min-width: 1200px) {
+  .equipment-rental h3 {
+    font-size: 2.1rem;
+  }
+
+  .equipment-rental img {
+    width: 480px !important;
+  }
+}
+
+/* ---------------- PROCESS ---------------- */
+.process{
+  background-color: var(--bg);
+  padding-bottom: 100px;
+}
+
+.process h4{
+  font-weight: 600;
+}
+
+ .process-row {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.process-card {
+  background: #ffffff;
+  padding: 35px 25px;
+  border-radius: 15px;
+  min-height: 440px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+  opacity: 0; 
+  transform: translateY(20px);
+  animation: fadeUp 0.7s ease forwards;
+  transition: box-shadow .3s !important;
+}
+
+
+.process-row .col-md-4:nth-child(1) .process-card { animation-delay: 0.1s; }
+.process-row .col-md-4:nth-child(2) .process-card { animation-delay: 0.25s; }
+.process-row .col-md-4:nth-child(3) .process-card { animation-delay: 0.4s; }
+
+.process-card:hover{
+   box-shadow: 0 16px 40px rgba(9,30,45,0.12);;
+}
+
+
+.process-card h4 {
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.process-card sup {
+  font-size: 12px;
+  position: absolute;
+  top: -1px;         
+}
+
+.process-img {
+  height: auto;
+  display: block;
+  margin: 0 auto 15px;
+}
+
+.process-card p{
+  color: var(--grey-text);
+}
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (min-width: 768px){
+  .middle{
+  margin-top: 130px;
+ }
+}
+
+.last-img{
+  width: 100%;
+}
+
+
+@media (max-width: 768px){
+  .last-img{
+  width: 70%;
+}
+.process-card{
+  width: 90%;
+  height: auto !important;
+  margin: auto;
+}
+}
+
+
+/* ---------------- Doctors ---------------- */
+.doctors h4{
+   color: var(--main-color);
+   font-weight: 600;
+}
+.doctors h4 span{
+   color:#4CC9E1;
+}
+.doctors h6{
+  font-weight: 600;
+}
+/* ---------------- HERO ---------------- */
+
+.footer-bg {
+  background-color: var(--main-color); 
+}
+
+
+.footer-logo {
+  width: 150px;
+}
+
+
+.footer-title {
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+
+.footer-list li {
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.footer-list li:hover {
+  color: #fff;
+}
+
+.footer-line {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+
+@media (max-width: 768px) {
+  .footer-bg {
+    text-align: center;
+  }
+
+  .footer-title {
+    margin-top: 20px;
+  }
+}
+/* ---------------- Sign Up ---------------- */
+
+
+.signup-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.signup-card {
+  width: 430px;
+  background: #ffffff;
+  padding: 35px 30px 40px;
+  border-radius: 25px;
+  box-shadow: 0px 5px 30px rgba(0,0,0,0.08);
+}
+
+.image-box {
+  display: flex;
+  justify-content: center;
+}
+.signup-img {
+  width: 260px;
+  user-select: none;
+}
+
+.custom-input-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+  position: relative;
+}
+
+.input-label {
+  font-size: 14px;
+  position: absolute;
+  top: -10px;
+  left: 12px;
+  background: #fff;
+  padding: 0 6px;
+  color: #555;
+}
+
+.custom-input {
+  height: 52px;
+  border-radius: 8px;
+  border: 1.3px solid #d4d4d4 !important;
+  font-size: 15px;
+  padding-left: 15px;
+  padding-top: 10px;
+}
+
+.custom-input::placeholder {
+  color: #b0b0b0;
+  font-size: 14px;
+}
+
+
+.continue-btn {
+  background: var(--main-color);
+  color: #fff;
+  padding: 12px 0;
+  border-radius: 10px;
+  font-size: 18px;
+}
+
+.continue-btn:hover {
+  background: #07132d;
+  color: white;
+}
+
+
+
+/* Navbar style */
+
+.nav-link{
+  color: black !important;
+}
+.active{
+  color: var(--secondary-color) !important;
+}
+.navbar,.nav-btns .btn {
+  font-size: 1.2rem;
+}
+.nav-btns .btn{
+  border-radius: 15px;
+}
+.sign-btn{
+  background-color: var(--main-color);
+  color: white;
+  border:1px solid var(--main-color);
+}
+.sign-btn:hover{
+   background-color:white !important;
+   color: var(--main-color) !important;
+   border:1px solid var(--main-color) !important;
+}
+.login-btn{
+  color: var(--main-color);
+  border:1px solid var(--main-color);
+}
+.login-btn:hover{
+   background-color:var(--main-color) !important;
+   color: white!important;
+   border:1px solid var(--main-color) !important;
+}
+
+
+
+
