@@ -73,7 +73,7 @@ export default function Home() {
               <h6 className=" fw-bold fs-5">Equipment Rental</h6>
               </div>
               <p>
-                Browse and rent medical devices and equipment.
+                Browse and rent medical devices and <br/>equipment.
               </p>
               <button className="btn w-100">
                 Browse Equipment

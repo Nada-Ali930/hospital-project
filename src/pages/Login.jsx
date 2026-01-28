@@ -10,9 +10,9 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // تحقق من الإيميل أو رقم التليفون
+    
     const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-    const isPhone = /^\d{10,15}$/.test(value); // رقم موبايل من 10 لـ 15 رقم
+    const isPhone = /^\d{10,15}$/.test(value); 
 
     if (!isEmail && !isPhone) {
       setError("Please enter a valid email or phone number");
@@ -23,9 +23,9 @@ export default function Login() {
     setLoading(true);
 
     try {
-      // محاكاة تسجيل الدخول
+      
       await new Promise((r) => setTimeout(r, 1000));
-      // لما ينجح، نعمل refresh للصفحة بدل navigate
+     
       window.location.reload();
     } catch (err) {
       setError(err.message || "Server error, please try again");
