@@ -13,6 +13,7 @@ import SignUp from "./pages/SignUp.jsx";
 import RentEquipment from "./pages/RentEquipment.jsx";
 import OTPForm from "./pages/Otp.jsx";
 import RentalDetails from "./pages/RentalDetails.jsx";
+import Rent from "./pages/rent.jsx";
 
 function App() {
   let routes = createBrowserRouter([
@@ -29,6 +30,7 @@ function App() {
         { path: "signUp/otp", element: <OTPForm/> },
         { path: "rentEquipment", element: <RentEquipment /> },
         { path: "rentals/:id", element: <RentalDetails/> },
+        { path: "rent/:id", element: <Rent/> },
         { path: "otp", element: <OTPForm/> }
         
       ]
