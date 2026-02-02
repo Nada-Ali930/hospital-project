@@ -1,34 +1,62 @@
-import React, { useState } from "react";
-import login from "../assets/images/login.png";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import loginImg from "../assets/images/login.png";
 
 export default function Login() {
-  const [value, setValue] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const navigate = useNavigate();
+
+  // 🟢 لو جاي من Signup حط الإيميل تلقائي
+  useEffect(() => {
+    const signupEmail = localStorage.getItem("signupEmail");
+    if (signupEmail) {
+      setEmail(signupEmail);
+    }
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    
-    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-    const isPhone = /^\d{10,15}$/.test(value); 
-
-    if (!isEmail && !isPhone) {
-      setError("Please enter a valid email or phone number");
-      return;
-    }
-
     setError("");
     setLoading(true);
 
     try {
-      
-      await new Promise((r) => setTimeout(r, 1000));
-     
-      window.location.reload();
+      const response = await axios.post(
+        "http://www.graduationproject.somee.com/api/Auth/login",
+        {
+          email,
+          password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      // ✅ حفظ بيانات اليوزر
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("userId", response.data.userId);
+      localStorage.setItem("name", response.data.name);
+      localStorage.setItem("role", response.data.role);
+
+      // 🧹 تنظيف بيانات signup
+      localStorage.removeItem("signupEmail");
+      localStorage.removeItem("signupOTP");
+
+      // 🚀 دخول الموقع
+      navigate("/");
+
     } catch (err) {
-      setError(err.message || "Server error, please try again");
+      setError(
+        err.response?.data?.title ||
+        err.response?.data?.message ||
+        "Invalid email or password"
+      );
     } finally {
       setLoading(false);
     }
@@ -36,34 +64,59 @@ export default function Login() {
 
   return (
     <div className="d-flex align-items-center justify-content-center min-vh-100 bg-light">
-      <div className="card shadow-sm p-4 login-card" style={{ maxWidth: "400px", width: "100%" }}>
+      <div
+        className="card shadow-sm p-4 login-card"
+        style={{ maxWidth: "400px", width: "100%" }}
+      >
         <div className="text-center mb-3">
-          <img src={login} alt="login illustration" className="img-fluid login-img" />
+          <img
+            src={loginImg}
+            alt="login"
+            className="img-fluid login-img"
+          />
         </div>
 
-        <h5 className="text-center fw-bold mb-3">Hello! Let's get started</h5>
+        <h5 className="text-center fw-bold mb-3">
+          Hello! Let's get started
+        </h5>
 
-        {error && <div className="alert alert-danger py-2">{error}</div>}
-
-        <form onSubmit={handleSubmit} className="mb-3">
-          <div className="mb-3">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Please enter your email or phone number"
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              required
-            />
+        {error && (
+          <div className="alert alert-danger py-2 text-center">
+            {error}
           </div>
+        )}
 
-          <button type="submit" className="btn custom-login-btn w-100" disabled={loading}>
-            {loading ? "Please wait..." : "Login"}
+        <form onSubmit={handleSubmit}>
+          <input
+            type="email"
+            className="form-control mb-3"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+
+          <input
+            type="password"
+            className="form-control mb-3"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+
+          <button
+            type="submit"
+            className="btn custom-login-btn w-100"
+            disabled={loading}
+          >
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
-        <p className="text-center mb-0">
+
+        <p className="text-center mt-3 mb-0">
           Don't have an account?{" "}
-          <Link to="/signup" className="text-decoration-none signup-text">
+          <Link to="/signup" className="signup-text">
             Sign up
           </Link>
         </p>
@@ -71,6 +124,3 @@ export default function Login() {
     </div>
   );
 }
-
-
-

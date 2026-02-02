@@ -529,26 +529,19 @@ h1{
 
 /*-------------------------------login--------------------------*/
 .login-card {
-  width: 360px;
   border-radius: 14px;
   background: #ffffff;
 }
 
 .login-img {
   max-width: 260px;
-  height: auto;
-  display: block;
-  margin-inline: auto;
+  margin: auto;
 }
 
 .custom-login-btn {
-  background-color: #031B4E !important;
+  background-color: #031b4e !important;
   color: white !important;
   border: none !important;
-}
-
-input::placeholder {
-  font-size: 13px;
 }
 
 .signup-text {
@@ -599,6 +592,8 @@ input::placeholder {
 
 .clear-btn {
   color: #007bff;
+  text-decoration: none;
+  margin-top: 30px;
 }
 
 .rang-price,
@@ -1521,3 +1516,267 @@ input::placeholder {
 }
 
 /*===================================================================================*/
+/*--------------------------------------------about----------------------------------------*/
+.about-page .A-M-title {
+  color: #0d2b52;
+  font-size:25px;
+  font-weight:700;
+}
+.P-about{
+  font-size:19px;
+  font-weight:500;
+  font-style:medium;
+  line-height:150%;
+}
+.about-page .A-M-title span{
+  color: #00b1d3;
+}
+
+.info-card {
+  border-radius: 16px;
+  padding: 10px;
+  transition: all ease 0.5s;
+  min-height: 90px;
+}
+
+.info-card h6{
+  font-size:27px;
+  font-weight:600;
+  color:#031B4E;
+}
+.info-card p{
+  font-size:17px;
+  font-weight:400;
+}
+.info-card.active {
+  background: linear-gradient(135deg, #0d2b52, #123d7a);
+}
+.info-card:hover{
+  transform:translateY(-5px);
+  box-shadow:5px 1px 20px 1px #07132d1c;
+  transition: 0.5s;
+}
+.offer{
+  background-color:#EDF5FB;
+  border-radius:16px;
+}
+.offer-card-new {
+  border: none;
+  border-radius: 14px;
+  background-color: #fff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  height: 100%;
+  transition: 0.3s ease;
+}
+
+.offer-card-new:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+.offer-icon {
+  background-color: #001a41;
+  color: white;
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 18px;
+}
+
+.offer-title-new {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #001a41;
+}
+
+.offer-text {
+  font-size: 16px;
+  color: #6c757d;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.impact-card {
+  border: none;
+  border-radius: 16px;
+  background: #EDF5FB;
+  padding: 10px;
+}
+
+.impact-section {
+  background: #ffffff;
+}
+
+.impact-box {
+  background: #EDF5FB;
+  border-radius: 18px;
+  padding: 28px;
+  height: 100%;
+}
+
+.impact-box h3 {
+  font-weight: 700;
+  margin-bottom: 22px;
+  color: #0a2540;
+  text-align: center;
+}
+
+.impact-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.impact-box li {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 18px;
+  color: #4a4a4a;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+
+.check-icon {
+  min-width: 26px;
+  height: 26px;
+  background: #2ecc71;   
+  color: #ffffff;       
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  margin-top: 3px;
+}
+.core-values h4{
+  color:#001a41;
+}
+
+.value-card {
+  border: none;
+  border-radius: 16px;
+  background: #DADADA;
+  padding: 20px 10px;
+  transition: 0.3s ease;
+  height: 100%;
+}
+
+.value-card:hover {
+  background: #0d2b56;
+  color: #fff;
+  transform: translateY(-5px);
+}
+
+.value-icon {
+  font-size: 28px;
+  color: #0d2b52;
+  margin-bottom: 10px;
+}
+
+.value-card:hover .value-icon {
+  color: #fff;
+}
+
+.value-card h6 {
+  font-weight: 600;
+  font-size: 18px;
+  color:#0d2b52;
+  margin-top:10px;
+}
+.value-card:hover h6 {
+  color: #fff;
+}
+.technology-section {
+  background-color: #ffffff;
+}
+
+.tech-card {
+  border-radius: 12px;
+  border: none;
+  background-color: #f6f8fc;
+  padding: 15px;
+  font-weight: 500;
+  color: #0d2b56;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: 0.3s ease;
+}
+
+.tech-card:hover {
+  background-color: #0d2b56;
+  color: #fff;
+  transform: translateY(-4px);
+}
+.technology-section h4{
+  color:#031B4E;
+}
+.footer {
+  background-color: #0d2b52;
+  color: #ffffff;
+  padding: 50px 0 20px;
+}
+
+.footer-logo {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.footer-text {
+  color: #cfd8e3;
+  font-size: 14px;
+}
+
+.footer-title {
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-links li {
+  font-size: 14px;
+  color: #cfd8e3;
+  margin-bottom: 6px;
+  cursor: pointer;
+}
+
+.footer-links li:hover {
+  color: #ffffff;
+}
+
+.footer-line {
+  border-color: rgba(255, 255, 255, 0.2);
+  margin: 20px 0;
+}
+
+.footer-copy {
+  font-size: 13px;
+  color: #cfd8e3;
+}
+/*--------------responsive-------------*/
+@media (max-width:768px){
+  .offer-text{
+    width:100%!important;
+  }
+  .A-M-title{
+    text-align:center;
+  }
+}
+@media (width:768px){
+  .tech-card{
+    height:100px;
+  }
+}
+@media (max-width:425px){
+  .A-M-title{
+    margin-top:20px;
+    text-align:center;
+  }
+}
