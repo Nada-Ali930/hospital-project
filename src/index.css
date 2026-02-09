@@ -425,12 +425,13 @@ h1{
   box-shadow: 0px 5px 30px rgba(0,0,0,0.08);
 }
 
-.image-box {
+.signup-card .image-box {
+  width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: center !important;
 }
 .signup-img {
-  width: 260px;
+  width: 260px !important;
   user-select: none;
 }
 
