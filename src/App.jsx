@@ -14,6 +14,9 @@ import RentEquipment from "./pages/RentEquipment.jsx";
 import OTPForm from "./pages/Otp.jsx";
 import RentalDetails from "./pages/RentalDetails.jsx";
 import Rent from "./pages/rent.jsx";
+import HospitalDetails from "./pages/HospitalDetails";
+import BookingPage from "./pages/BookingPage.jsx";
+
 
 function App() {
   let routes = createBrowserRouter([
@@ -31,8 +34,9 @@ function App() {
         { path: "rentEquipment", element: <RentEquipment /> },
         { path: "rentals/:id", element: <RentalDetails/> },
         { path: "rent/:id", element: <Rent/> },
-        { path: "otp", element: <OTPForm/> }
-        
+        { path: "otp", element: <OTPForm/> },
+        {path:"hospital/:id", element:<HospitalDetails />},
+        { path: "hospital/:id/booking", element: <BookingPage /> },
       ]
     }
   ]);
