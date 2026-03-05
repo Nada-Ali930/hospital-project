@@ -14,6 +14,11 @@ import RentEquipment from "./pages/RentEquipment.jsx";
 import OTPForm from "./pages/Otp.jsx";
 import RentalDetails from "./pages/RentalDetails.jsx";
 import Rent from "./pages/rent.jsx";
+import HospitalSearch from "./pages/HospitalSearch.jsx";
+import NewPassword from "./pages/NewPassword.jsx";
+import ForgetPassword from "./pages/ForgetPassword.jsx";
+import VerificationCode from "./pages/VerificationCode.jsx";
+import ResetPassword from "./pages/ResetPassword.jsx";
 
 function App() {
   let routes = createBrowserRouter([
@@ -29,9 +34,14 @@ function App() {
         { path: "signUp", element: <SignUp /> },
         { path: "signUp/otp", element: <OTPForm/> },
         { path: "rentEquipment", element: <RentEquipment /> },
+        { path: "hospitalSearch", element: <HospitalSearch /> },
         { path: "rentals/:id", element: <RentalDetails/> },
         { path: "rent/:id", element: <Rent/> },
-        { path: "otp", element: <OTPForm/> }
+        { path: "otp", element: <OTPForm/> },
+        { path: "new-password", element: <NewPassword/> },
+        { path: "forget-password", element: <ForgetPassword/> },
+        { path: "forget-password/veification-code", element: <VerificationCode/> },
+        { path: "forget-password/veification-code/reset-password", element: <ResetPassword/> },
         
       ]
     }

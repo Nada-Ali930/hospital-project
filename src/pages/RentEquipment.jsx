@@ -1,80 +1,125 @@
-import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Button, Form } from "react-bootstrap";
 
-import bed from "../assets/images/bed.jpg";
-import nebulizer from "../assets/images/nebulizer.jpg";
-import lift from "../assets/images/lift.jpg";
-import walker from "../assets/images/walker.jpg";
-import crutches from "../assets/images/crutches.jpg";
-import wheelchair from "../assets/images/wheelchair.jpg";
+import React, { useEffect, useState } from "react";
+import { Container, Row, Col, Card, Button, Form } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+
+const BASE_URL = "http://www.graduationproject.somee.com";
+
+const getImageUrl = (img) => {
+  if (!img) return "";
+  return `${BASE_URL}${img.replace(/\\/g, "/")}`;
+};
+
+const CATEGORIES = ["All", "Monitoring", "Respiratory", "Diagnostic", "Therapy", "Surgical"];
 
 export default function RentEquipment() {
-  // ---------- PRODUCTS ----------
-  const products = [
-    { name: "Medical bed", price: 25, category: "Hospital Beds", img: bed, reviews: 120, available: true },
-    { name: "Omron Compressor Nebulizer", price: 10, category: "Oxygen", img: nebulizer, reviews: 200, available: true },
-    { name: "Electric Patient Lift", price: 50, category: "Patient Lifts", img: lift, reviews: 95, available: false },
-    { name: "Walking frame", price: 15, category: "Walkers & Canes", img: walker, reviews: 150, available: true },
-    { name: "Underarm crutches", price: 10, category: "Walkers & Canes", img: crutches, reviews: 255, available: true },
-    { name: "Electric wheelchair", price: 30, category: "Wheelchairs", img: wheelchair, reviews: 120, available: false },
-  ];
+  const navigate = useNavigate();
 
-  // ---------- SEARCH ----------
+  // ================= STATES =================
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-
-  // ---------- FILTER STATES ----------
-  const [category, setCategory] = useState("");
-  const [maxPrice, setMaxPrice] = useState(500);
+  const [maxPrice, setMaxPrice] = useState(5000);
   const [onlyAvailable, setOnlyAvailable] = useState(false);
-  const [filtersApplied, setFiltersApplied] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // ---------- PAGINATION ----------
+  const [selectedCategory, setSelectedCategory] = useState("All"); 
+  const [categoryForFilter, setCategoryForFilter] = useState("All"); 
+
   const itemsPerPage = 6;
   const [currentPage, setCurrentPage] = useState(1);
 
-  // ---------- RESET PAGE WHEN SEARCH OR FILTER CHANGE ----------
+  // ================= MAP DATA =================
+  const mapData = (data) =>
+    data.map((item) => ({
+      id: item.equipmentId,
+      name: item.name,
+      price: item.pricePerDay,
+      available: item.availability,
+      img: getImageUrl(item.imageUrl),
+      category: item.name.toLowerCase().includes("monitor")
+        ? "Monitoring"
+        : item.name.toLowerCase().includes("vent")
+        ? "Respiratory"
+        : item.name.toLowerCase().includes("x-ray")
+        ? "Diagnostic"
+        : item.name.toLowerCase().includes("pump")
+        ? "Therapy"
+        : "Surgical",
+    }));
+
+  // ================= GET ALL =================
   useEffect(() => {
+    fetch(`${BASE_URL}/api/Equipment/search`)
+      .then((res) => res.json())
+      .then((data) => {
+        const mapped = mapData(data);
+        setProducts(mapped);
+        setFilteredProducts(mapped);
+        setLoading(false);
+      });
+  }, []);
+
+  // ================= SEARCH =================
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetch(`${BASE_URL}/api/Equipment/search?name=${searchTerm}`)
+        .then((res) => res.json())
+        .then((data) => {
+          const mapped = mapData(data);
+          setProducts(mapped);
+          setFilteredProducts(mapped);
+          setCurrentPage(1);
+        });
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  // ================= FILTER =================
+  const applyFilters = () => {
+    const filtered = products.filter(
+      (item) =>
+        item.price <= maxPrice &&
+        (!onlyAvailable || item.available) &&
+        (categoryForFilter === "All" || item.category === categoryForFilter)
+    );
+    setFilteredProducts(filtered);
+    setSelectedCategory(categoryForFilter); 
     setCurrentPage(1);
-  }, [searchTerm, filtersApplied]);
+  };
 
-  // ---------- FILTER LOGIC ----------
-  const filteredProducts = products.filter((p) => {
-    const matchSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
+  const clearFilters = () => {
+    setMaxPrice(5000);
+    setOnlyAvailable(false);
+    setCategoryForFilter("All");
+    setSelectedCategory("All");
+    setFilteredProducts(products);
+    setCurrentPage(1);
+  };
 
-    if (!filtersApplied) {
-      return matchSearch;
-    }
-
-    const matchCategory = category ? p.category === category : true;
-    const matchPrice = p.price <= maxPrice;
-    const matchAvailability = onlyAvailable ? p.available : true;
-
-    return matchSearch && matchCategory && matchPrice && matchAvailability;
-  });
-
-  // ---------- PAGINATION LOGIC ----------
+  // ================= PAGINATION =================
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const displayedProducts = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
 
+  // ================= UI =================
   return (
     <Container fluid className="p-4">
       <h3 className="text-center my-4 main-title">
         <span>Find</span> & <span>Rent</span> Medical Equipment
       </h3>
 
-      {/* SEARCH BAR */}
+      {/* SEARCH */}
       <Row className="justify-content-center mb-4">
         <Col md={6}>
           <div className="input-group">
             <span className="input-group-text border-end-0 search-icon">
               <i className="fa-solid fa-magnifying-glass"></i>
             </span>
-
             <Form.Control
               type="text"
               className="search-bar border-start-0"
-              placeholder="Search for equipment like 'wheelchair', 'hospital bed'..."
+              placeholder="Search for equipment like 'wheelchair'..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -83,58 +128,44 @@ export default function RentEquipment() {
       </Row>
 
       <Row>
-        {/* FILTERS */}
+        {/* FILTER */}
         <Col md={3}>
-          <Card className="p-3 shadow-sm rounded-2 filter">
-            <div className="d-flex justify-content-between align-items-center mb-2">
-              <h5 className="mb-0">Filters</h5>
-
-              <button
-                className="btn btn-link p-0 clear-btn text-decoration-none"
-                onClick={() => {
-                  setCategory("");
-                  setMaxPrice(500);
-                  setOnlyAvailable(false);
-                  setFiltersApplied(false);
-                  setCurrentPage(1);
-                }}
-              >
-                Clear all
-              </button>
+          <Card className="p-3 filter">
+            <div className="d-flex justify-content-between align-items-center">
+              <h5 className="category mb-0">Filter</h5>
+              <Button variant="link" onClick={clearFilters} className="clear-btn">
+                Clear
+              </Button>
             </div>
 
-            <h6 className="category">Category</h6>
-            {["Oxygen", "Wheelchairs", "Hospital Beds", "Walkers & Canes", "Patient Lifts"].map((cat) => (
-              <Form.Check
-                className="text-muted category-items"
-                type="radio"
-                label={cat}
-                name="category"
-                key={cat}
-                onChange={() => setCategory(cat)}
-              />
-            ))}
+            {/* CATEGORY */}
+            <h6 className="category mt-3">Category</h6>
+            <div className="category-items">
+              {CATEGORIES.map((cat) => (
+                <Form.Check
+                  key={cat}
+                  type="radio"
+                  name="category"
+                  label={cat}
+                  checked={categoryForFilter === cat}
+                  onChange={() => setCategoryForFilter(cat)}
+                />
+              ))}
+            </div>
 
             <hr />
-
-            <h6 className="rang-title">Daily Rental Rate</h6>
+            <h6 className="mt-3">Max Price / Day</h6>
             <Form.Range
-              className="form-rang"
-              min={10}
-              max={500}
+              min={0}
+              max={5000}
               value={maxPrice}
               onChange={(e) => setMaxPrice(e.target.value)}
             />
-            <div className="d-flex align-items-center gap-5">
-              <small className="rang-price r-price">$10</small>
-              <small className="rang-price">${maxPrice}+</small>
-            </div>
+            <small>${maxPrice}</small>
 
             <hr />
-
             <div className="d-flex align-items-center justify-content-between">
               <h6 className="mb-0 availability">Availability</h6>
-
               <Form.Check
                 type="switch"
                 className="big-switch"
@@ -143,68 +174,57 @@ export default function RentEquipment() {
               />
             </div>
 
-            {/* APPLY FILTERS */}
-            <Button
-              className="mt-3 w-100 filter-button"
-              variant="primary"
-              onClick={() => {
-                setFiltersApplied(true);
-                setCurrentPage(1);
-              }}
-            >
+            <Button className="filter-button w-100 mt-3" onClick={applyFilters}>
               Apply Filters
             </Button>
           </Card>
         </Col>
 
-        {/* PRODUCTS LIST */}
+        {/* PRODUCTS */}
         <Col md={9}>
+          {loading && <h5 className="text-center">Loading...</h5>}
+
           <Row>
-            {displayedProducts.length > 0 ? (
-              displayedProducts.map((item, index) => (
-                <Col md={4} className="mb-4" key={index}>
-                  <Card className="product-card shadow-sm">
-                    {/* image */}
-                    <div className="card-img-wrap">
-                      <Card.Img variant="top" src={item.img} className="product-img" />
-                    </div>
+            {displayedProducts.map((item) => (
+              <Col md={4} className="mb-4" key={item.id}>
+                <Card className="product-card h-100 d-flex flex-column">
+                  <div className="card-img-wrap">
+                    <Card.Img src={item.img} alt={item.name} className="product-img" />
+                  </div>
 
-                    {/*  (nifty bottom box) */}
-                    <div className="bottom-blue-box">
-                      {/* title*/}
-                      <h5 className="product-title">{item.name}</h5>
+                  <div className="bottom-blue-box flex-grow-1 d-flex flex-column p-3">
+                    {!item.available && <span className="badge bg-danger mb-2">Not Available</span>}
 
-                      {/* stars + Reviews */}
-                      <div className="ratings-row d-flex justify-content-between align-items-center">
-                        <div className="stars">
-                          <i className="fa-solid fa-star"></i>
-                          <i className="fa-solid fa-star"></i>
-                          <i className="fa-solid fa-star"></i>
-                          <i className="fa-solid fa-star"></i>
-                          <i className="fa-regular fa-star empty-star"></i>
-                        </div>
+                    <h5 className="product-title">{item.name}</h5>
 
-                        <span className="text-muted">({item.reviews} Reviews)</span>
+                    <div className="ratings-row d-flex justify-content-between align-items-center">
+                      <div className="stars">
+                        <i className="fa-solid fa-star"></i>
+                        <i className="fa-solid fa-star"></i>
+                        <i className="fa-solid fa-star"></i>
+                        <i className="fa-solid fa-star"></i>
+                        <i className="fa-regular fa-star empty-star"></i>
                       </div>
-
-                      {/* price*/}
-                      <div className="fw-bold price-text">From ${item.price}/day</div>
-
-                      {/* button */}
-                      <Button className="view-btn mt-2">View Details</Button>
+                      <span className="text-muted">(0 Reviews)</span>
                     </div>
-                  </Card>
-                </Col>
-              ))
-            ) : (
-              <h5 className="text-center mt-5 text-muted">No results found.</h5>
-            )}
+
+                    <div className="price-text mt-2">From ${item.price} / day</div>
+
+                    <Button
+                      className="view-btn mt-auto"
+                      onClick={() => navigate(`/rentals/${item.id}`)}
+                    >
+                      View Details
+                    </Button>
+                  </div>
+                </Card>
+              </Col>
+            ))}
           </Row>
 
           {/* PAGINATION */}
-          {filteredProducts.length > 0 && (
-            <div className="custom-pagination d-flex align-items-center justify-content-center mt-4">
-              {/* Previous */}
+          {totalPages > 1 && (
+            <div className="custom-pagination mt-4">
               <button
                 className="pagination-arrow"
                 disabled={currentPage === 1}
@@ -213,26 +233,18 @@ export default function RentEquipment() {
                 <i className="fa-solid fa-arrow-left"></i> Previous
               </button>
 
-              {/* Numbers */}
-              <div className="numbers d-flex align-items-center">
-                {[1, 2, 3, "...", totalPages].map((num, idx) =>
-                  num === "..." ? (
-                    <span key={idx} className="dots">
-                      …
-                    </span>
-                  ) : (
-                    <button
-                      key={idx}
-                      className={`number ${currentPage === num ? "active" : ""}`}
-                      onClick={() => setCurrentPage(num)}
-                    >
-                      {num}
-                    </button>
-                  )
-                )}
+              <div className="numbers">
+                {[...Array(totalPages)].map((_, i) => (
+                  <button
+                    key={i}
+                    className={`number ${currentPage === i + 1 ? "active" : ""}`}
+                    onClick={() => setCurrentPage(i + 1)}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
               </div>
 
-              {/* Next */}
               <button
                 className="pagination-arrow"
                 disabled={currentPage === totalPages}

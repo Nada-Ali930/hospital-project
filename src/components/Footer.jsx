@@ -2,7 +2,7 @@ import React from "react";
 import logo from '../assets/images/logo.png'
 export default function Footer() {
   return (
-    <footer className="footer-bg text-white pt-5 pb-4 mt-5">
+    <footer className="footer-bg text-white pt-5 pb-4 ">
       <div className="container">
         <div className="row text-center text-md-start">
 
