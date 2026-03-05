@@ -4,15 +4,8 @@ import medicalEquip from '../assets/images/medicalEquip.jpg'
 import process1 from '../assets/images/process1.jpg'
 import process2 from '../assets/images/process2.jpg'
 import process3 from '../assets/images/process3.jpg'
-import doctor1 from '../assets/images/doctor1.jpg'
-import doctor2 from '../assets/images/doctor2.jpg'
-import doctor3 from '../assets/images/doctor3.jpg'
-import doctor4 from '../assets/images/doctor4.jpg'
-import doctor5 from '../assets/images/doctor5.jpg'
-import doctor6 from '../assets/images/doctor6.jpg'
-import doctor7 from '../assets/images/doctor7.jpg'
-import doctor8 from '../assets/images/doctor8.jpg'
 import Footer from '../components/Footer.jsx'
+import { Link } from "react-router-dom";
 export default function Home() {
   return (
     <div className="home-page">
@@ -50,50 +43,71 @@ export default function Home() {
         </div>
       </div>
               {/* 3 cards */}
-      <div className="header-cards ">
-        <div className="container">
-          <div className="row g-4 justify-content-center">
-          <div className="col-10 col-md-4 card1">
-            <div className="bg-white text-dark p-4 rounded shadow">
-              <div className='d-flex align-items-center mb-2'>
-              <div className="box1  me-2"><i className=" fas fa-search"></i></div>
-              <h6 className=" fw-bold fs-5">Hospital Search</h6>
-              </div>
-              <p>
-                Find hospitals by capacity, location, <br/>and rating.
-              </p>
-              <button className="btn w-100">Search Now</button>
-            </div>
-          </div>
+<div className="header-cards">
+  <div className="container">
+    <div className="row g-4 justify-content-center">
 
-          <div className="col-10 col-md-4 card2">
-            <div className="bg-white text-dark p-4 rounded shadow">
-              <div className='d-flex align-items-center mb-2'>
-              <div className="box2  me-2"><i className=" fas fa-cube"></i></div>
-              <h6 className=" fw-bold fs-5">Equipment Rental</h6>
-              </div>
-              <p>
-                Browse and rent medical devices and <br/>equipment.
-              </p>
-              <button className="btn w-100">
-                Browse Equipment
-              </button>
+      <div className="col-10 col-md-4 card1">
+        <div className="bg-white text-dark p-4 rounded shadow">
+          <div className="d-flex align-items-center mb-2">
+            <div className="box1 me-2">
+              <i className="fas fa-search"></i>
             </div>
+            <h6 className="fw-bold fs-5">Hospital Search</h6>
           </div>
+          <p>
+            Find hospitals by capacity, location, <br />and rating.
+          </p>
 
-          <div className="col-10 col-md-4 card3">
-            <div className="bg-white text-dark p-4 rounded shadow">
-              <div className='d-flex align-items-center mb-2'>
-              <div className="box3  me-2"><i className=" far fa-comment-dots"></i></div>
-              <h6 className=" fw-bold fs-5">AI Assistant</h6>
-              </div>
-              <p>Get personalized health <br/>recommendations from our AI</p>
-              <button className="btn  w-100">Start Chat</button>
-            </div>
-          </div>
-        </div>
+          <Link to="/hospitalSearch" className="btn w-100 home-button-1">
+            Search Now
+          </Link>
+
         </div>
       </div>
+
+      <div className="col-10 col-md-4 card2">
+        <div className="bg-white text-dark p-4 rounded shadow">
+          <div className="d-flex align-items-center mb-2">
+            <div className="box2 me-2">
+              <i className="fas fa-cube"></i>
+            </div>
+            <h6 className="fw-bold fs-5">Equipment Rental</h6>
+          </div>
+          <p>
+            Browse and rent medical devices and <br />equipment.
+          </p>
+
+          <Link to="/rentEquipment" className="btn w-100 home-button-2">
+            Browse Equipment
+          </Link>
+
+        </div>
+      </div>
+
+      <div className="col-10 col-md-4 card3">
+        <div className="bg-white text-dark p-4 rounded shadow">
+          <div className="d-flex align-items-center mb-2">
+            <div className="box3 me-2">
+              <i className="far fa-comment-dots"></i>
+            </div>
+            <h6 className="fw-bold fs-5">AI Assistant</h6>
+          </div>
+          <p>
+            Get personalized health <br />recommendations from our AI
+          </p>
+
+          <Link to="/ai-chat" className="btn w-100 home-button-3">
+            Start Chat
+          </Link>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
       
       </section>
       {/* ---------------- WHY CHOOSE US ---------------- */}
@@ -198,122 +212,7 @@ export default function Home() {
   </div>
 </section>
 
-      {/* ---------------- DOCTORS SECTION ---------------- */}
-      <section className="py-5 doctors">
-        <div className="container">
-          <h4 className="mb-3 fs-3">
-            Experienced and <span>Skilled Team </span> 
-            of Experts
-          </h4>
 
-          <div className="row g-0 px-3">
-              <div className="col-md-3 col-6">
-                <div className="text-center p-3 bg-white rounded ">
-                  <img
-                    src={doctor1}
-                    className="rounded mb-3"
-                    style={{
-                      width: "100%",
-                    }}
-                  />
-                  <h6 className=" fs-4">Dr. Ebony Cormier</h6>
-                </div>
-              </div>
-              <div className="col-md-3 col-6">
-                <div className="text-center p-3 bg-white rounded ">
-                  <img
-                    src={doctor2}
-                    className="rounded mb-3"
-                    style={{
-                      width: "100%",
-                      
-                    }}
-                  />
-                  <h6 className=" fs-4">Dr. Enestine Murzik</h6>
-                </div>
-              </div>
-              <div className="col-md-3 col-6">
-                <div className="text-center p-3 bg-white rounded ">
-                  <img
-                    src={doctor3}
-                    className="rounded mb-3"
-                    style={{
-                      width: "100%",
-                      
-                    }}
-                  />
-                  <h6 className=" fs-4">Dr. Donald Gottlieb</h6>
-                </div>
-              </div>
-              <div className="col-md-3 col-6">
-                <div className="text-center p-3 bg-white rounded ">
-                  <img
-                    src={doctor4}
-                    className="rounded mb-3"
-                    style={{
-                      width: "100%",
-                      
-                    }}
-                  />
-                  <h6 className=" fs-4">Dr. Hugh Auderar</h6>
-                </div>
-              </div>
-              <div className="col-md-3 col-6">
-                <div className="text-center p-3 bg-white rounded ">
-                  <img
-                    src={doctor5}
-                    className="rounded mb-3"
-                    style={{
-                      width: "100%",
-                      
-                    }}
-                  />
-                  <h6 className=" fs-4">Dr. Lola Gleichner</h6>
-                </div>
-              </div>
-              <div className="col-md-3 col-6">
-                <div className="text-center p-3 bg-white rounded ">
-                  <img
-                    src={doctor6}
-                    className="rounded mb-3"
-                    style={{
-                      width: "100%",
-                      
-                    }}
-                  />
-                  <h6 className=" fs-4">Dr. Joshua Effertz</h6>
-                </div>
-              </div>
-              <div className="col-md-3 col-6">
-                <div className="text-center p-3 bg-white rounded ">
-                  <img
-                    src={doctor7}
-                    className="rounded mb-3"
-                    style={{
-                      width: "100%",
-                      
-                    }}
-                  />
-                  <h6 className=" fs-4">Dr. Bertha Harvey</h6>
-                </div>
-              </div>
-              <div className="col-md-3 col-6">
-                <div className="text-center p-3 bg-white rounded ">
-                  <img
-                    src={doctor8}
-                    className="rounded mb-3"
-                    style={{
-                      width: "100%",
-                      
-                    }}
-                  />
-                  <h6 className=" fs-4">Dr. Alton Guloski</h6>
-                </div>
-              </div>
-           
-          </div>
-        </div>
-      </section>
       <Footer/>
     </div>
     

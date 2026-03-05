@@ -6,16 +6,18 @@ import loginImg from "../assets/images/login.png";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  // 🟢 لو جاي من Signup حط الإيميل تلقائي
   useEffect(() => {
-    const signupEmail = localStorage.getItem("signupEmail");
-    if (signupEmail) {
-      setEmail(signupEmail);
+    const savedEmail = localStorage.getItem("rememberEmail");
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setRemember(true);
     }
   }, []);
 
@@ -26,7 +28,7 @@ export default function Login() {
 
     try {
       const response = await axios.post(
-        "http://www.graduationproject.somee.com/api/Auth/login",
+        "http://graduationprojectapi.somee.com/api/Auth/login",
         {
           email,
           password,
@@ -35,27 +37,29 @@ export default function Login() {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
-      // ✅ حفظ بيانات اليوزر
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("userId", response.data.userId);
-      localStorage.setItem("name", response.data.name);
-      localStorage.setItem("role", response.data.role);
+      const storage = remember ? localStorage : sessionStorage;
 
-      // 🧹 تنظيف بيانات signup
-      localStorage.removeItem("signupEmail");
-      localStorage.removeItem("signupOTP");
+      storage.setItem("token", response.data.token);
+      storage.setItem("userId", response.data.userId);
+      storage.setItem("name", response.data.name);
+      storage.setItem("role", response.data.role);
 
-      // 🚀 دخول الموقع
+      // remember email logic
+      if (remember) {
+        localStorage.setItem("rememberEmail", email);
+      } else {
+        localStorage.removeItem("rememberEmail");
+      }
+
       navigate("/");
-
     } catch (err) {
       setError(
         err.response?.data?.title ||
-        err.response?.data?.message ||
-        "Invalid email or password"
+          err.response?.data?.message ||
+          "Invalid email or password",
       );
     } finally {
       setLoading(false);
@@ -63,62 +67,74 @@ export default function Login() {
   };
 
   return (
-    <div className="d-flex align-items-center justify-content-center min-vh-100 bg-light">
-      <div
-        className="card shadow-sm p-4 login-card"
-        style={{ maxWidth: "400px", width: "100%" }}
-      >
+    <div className="login-container">
+      <div className="login-card">
         <div className="text-center mb-3">
-          <img
-            src={loginImg}
-            alt="login"
-            className="img-fluid login-img"
-          />
+          <img src={loginImg} alt="login" className="login-img" />
         </div>
 
-        <h5 className="text-center fw-bold mb-3">
-          Hello! Let's get started
-        </h5>
+        <h4 className="text-center fw-bold mb-3">Hello! Let's get started</h4>
 
         {error && (
-          <div className="alert alert-danger py-2 text-center">
-            {error}
-          </div>
+          <div className="alert alert-danger py-2 text-center">{error}</div>
         )}
 
         <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            className="form-control mb-3"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+          {/* Email */}
+          <div className="input-group-custom">
+            <label>Email</label>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-          <input
-            type="password"
-            className="form-control mb-3"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          {/* Password */}
+          <div className="input-group-custom">
+            <label>Password</label>
+            <div className="password-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="******"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <span
+                className="eye-icon"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                👁
+              </span>
+            </div>
+          </div>
 
-          <button
-            type="submit"
-            className="btn custom-login-btn w-100"
-            disabled={loading}
-          >
+          {/* Remember & Forget */}
+          <div className="login-options">
+            <div className="remember-me">
+              <input
+                type="checkbox"
+                checked={remember}
+                onChange={() => setRemember(!remember)}
+              />
+              <label>Remember me</label>
+            </div>
+
+            <Link to="/forget-password" className="forget-link">
+              Forget password?
+            </Link>
+          </div>
+
+          <button type="submit" className="login-btn" disabled={loading}>
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <p className="text-center mt-3 mb-0">
-          Don't have an account?{" "}
-          <Link to="/signup" className="signup-text">
-            Sign up
-          </Link>
+        <p className="signup-text mt-3">
+          Don't have an account? <Link to="/signup">Sign up</Link>
         </p>
       </div>
     </div>

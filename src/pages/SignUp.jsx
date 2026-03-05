@@ -13,13 +13,9 @@ function SignUp() {
 
   const navigate = useNavigate();
 
-  // generate otp
-  const generateOTP = () => Math.floor(100000 + Math.random() * 900000);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation
     const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     const isPhoneValid = /^\d{10,15}$/.test(phone);
     const isPasswordValid =
@@ -37,44 +33,31 @@ function SignUp() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/Auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          name: fullName,
-          email,
-          password,
-          phone,
-        }),
-      });
-
-      
-      if (res.ok) {
-        const otp = generateOTP();
-        localStorage.setItem("signupEmail", email);
-        localStorage.setItem("signupOTP", otp);
-
-        navigate("/otp");
-        return;
-      }
-
-      
-      if (res.status === 400) {
-        const text = await res.text();
-
-        if (text.toLowerCase().includes("email exists")) {
-          setError("Email already exists");
-        } else {
-          setError(text || "Server error, please try again");
+      const res = await fetch(
+        "http://graduationprojectapi.somee.com/api/Auth/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: fullName,
+            email,
+            password,
+            phone,
+          }),
         }
+      );
+
+      const text = await res.text();
+
+      if (res.ok && text.includes("OTP")) {
+        
+        navigate("/otp", { state: { email } });
         return;
       }
 
-     
-      setError("Server error, please try again");
+      setError(text || "Server error, please try again");
     } catch (err) {
       console.error(err);
       setError("Server error, please try again");
@@ -125,6 +108,7 @@ function SignUp() {
               onChange={(e) => setPhone(e.target.value)}
             />
           </div>
+
           <div className="custom-input-box">
             <label className="input-label">Password</label>
             <div>
@@ -134,7 +118,7 @@ function SignUp() {
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-              />
+                />
               <span
                 onClick={() => setShowPassword(!showPassword)}
                 style={{
@@ -148,7 +132,11 @@ function SignUp() {
                   fontSize: "16px",
                 }}
               >
-                {showPassword ? <i class="fa-solid fa-eye"></i>  : <i class="fa-solid fa-eye-slash"></i>}
+                {showPassword ? (
+                  <i className="fa-solid fa-eye"></i>
+                ) : (
+                  <i className="fa-solid fa-eye-slash"></i>
+                )}
               </span>
             </div>
           </div>
