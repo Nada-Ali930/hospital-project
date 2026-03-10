@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-const BASE_URL = "http://www.graduationproject.somee.com";
+const BASE_URL = "http://GraduationProject.somee.com";
 
 const getImageUrl = (img) => {
   if (!img) return "";

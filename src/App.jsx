@@ -22,6 +22,8 @@ import NewPassword from "./pages/NewPassword.jsx";
 import ForgetPassword from "./pages/ForgetPassword.jsx";
 import VerificationCode from "./pages/VerificationCode.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
+import AiAssistant from "./pages/AiAssistant";
+import Profile from "./pages/Profile";
 
 function App() {
   let routes = createBrowserRouter([
@@ -48,6 +50,8 @@ function App() {
         { path: "forget-password", element: <ForgetPassword/> },
         { path: "forget-password/veification-code", element: <VerificationCode/> },
         { path: "forget-password/veification-code/reset-password", element: <ResetPassword/> },
+        { path: "ai-assistant", element: <AiAssistant /> },
+        {path: "profile",  element: <Profile /> },
         
       ]
     }

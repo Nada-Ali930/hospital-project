@@ -1,0 +1,32 @@
+{
+  "personalInfo": "المعلومات الشخصية",
+  "name": "الاسم",
+  "date": "تاريخ الميلاد",
+  "gender": "النوع",
+  "phone": "رقم الهاتف",
+  "email": "البريد الإلكتروني",
+
+  "patient": "مريض",
+
+  "menuPersonal": "المعلومات الشخصية",
+  "menuRentals": "الأجهزة المؤجرة",
+  "menuNotifications": "إعدادات الإشعارات",
+  "menuLanguage": "اللغة",
+  "logout": "تسجيل الخروج",
+
+  "notificationTitle": "إعدادات الإشعارات",
+  "appointment": "تذكير بالمواعيد",
+  "appointmentDesc": "تنبيه قبل المواعيد القادمة",
+
+  "equipment": "تنبيهات تأجير الأجهزة",
+  "equipmentDesc": "تنبيهات بمواعيد الإرجاع وحالة التأجير",
+
+  "selectLanguage": "اختيار اللغة",
+  "languageDesc": "اختر لغة العرض المفضلة",
+
+  "english": "الإنجليزية",
+  "arabic": "العربية",
+
+  "male": "ذكر",
+  "female": "أنثى"
+}

@@ -1,0 +1,32 @@
+{
+  "personalInfo": "Personal Information",
+  "name": "Name",
+  "date": "Date of Birth",
+  "gender": "Gender",
+  "phone": "Phone",
+  "email": "Email",
+
+  "patient": "Patient",
+
+  "menuPersonal": "Personal Information",
+  "menuRentals": "My Rentals",
+  "menuNotifications": "Notification Settings",
+  "menuLanguage": "Language",
+  "logout": "Log out",
+
+  "notificationTitle": "Notification Settings",
+  "appointment": "Appointment Reminders",
+  "appointmentDesc": "Reminders for upcoming visits",
+
+  "equipment": "Equipment Rental Alerts",
+  "equipmentDesc": "Reminders for return dates and rental status",
+
+  "selectLanguage": "Select Language",
+  "languageDesc": "Select your preferred display language",
+
+  "english": "English",
+  "arabic": "Arabic",
+
+  "male": "Male",
+  "female": "Female"
+}
