@@ -1,7 +1,7 @@
 
 
 import "bootstrap/dist/css/bootstrap.min.css";
-import Navbar from "./components/Navbar.jsx";
+// import Navbar from "./components/Navbar.jsx";
 import Home from "./pages/Home.jsx";
 import About from "./pages/About.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -13,7 +13,7 @@ import SignUp from "./pages/SignUp.jsx";
 import RentEquipment from "./pages/RentEquipment.jsx";
 import OTPForm from "./pages/Otp.jsx";
 import RentalDetails from "./pages/RentalDetails.jsx";
-import Rent from "./pages/rent.jsx";
+// import Rent from "./pages/rent.jsx";
 
 import HospitalDetails from "./pages/HospitalDetails";
 import BookingPage from "./pages/BookingPage.jsx";
@@ -24,6 +24,9 @@ import VerificationCode from "./pages/VerificationCode.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
 import AiAssistant from "./pages/AiAssistant";
 import Profile from "./pages/Profile";
+import ConfirmRental from "./pages/ConfirmRental.jsx";
+import Notifications from "./pages/Notifications.jsx";
+import DoctorPayment from "./pages/DoctorPayment.jsx";
 
 function App() {
   let routes = createBrowserRouter([
@@ -41,7 +44,7 @@ function App() {
         { path: "rentEquipment", element: <RentEquipment /> },
         { path: "hospitalSearch", element: <HospitalSearch /> },
         { path: "rentals/:id", element: <RentalDetails/> },
-        { path: "rent/:id", element: <Rent/> },
+        { path: "rent/:id", element: <ConfirmRental/> },
         { path: "otp", element: <OTPForm/> },
 
         {path:"hospital/:id", element:<HospitalDetails />},
@@ -52,6 +55,8 @@ function App() {
         { path: "forget-password/veification-code/reset-password", element: <ResetPassword/> },
         { path: "ai-assistant", element: <AiAssistant /> },
         {path: "profile",  element: <Profile /> },
+        {path: "notifications",  element: <Notifications/> },
+        {path: "/doctor-payment/:bookingId",  element: <DoctorPayment/> },
         
       ]
     }

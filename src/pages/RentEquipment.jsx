@@ -104,7 +104,7 @@ export default function RentEquipment() {
 
   // ================= UI =================
   return (
-    <Container fluid className="p-4">
+    <Container fluid className="p-4 rent-equip">
       <h3 className="text-center my-4 main-title">
         <span>Find</span> & <span>Rent</span> Medical Equipment
       </h3>

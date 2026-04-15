@@ -50,109 +50,117 @@ export default function HospitalSearch() {
 
   return (
     <div className="hospital-search-page">
-      <Container className="hospital-page">
-        <h2 className="page-title">Find Hospitals</h2>
+  <Container className="hospital-page">
+    <h2 className="page-title">Find Hospitals</h2>
 
-        {/* Search Bar */}
-        <Form onSubmit={handleSearch} className="search-form">
-          <Form.Control
-            type="text"
-            placeholder="Search by location or hospital name"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-          />
-          <Button type="submit" className="search-btn">
-            Search
-          </Button>
-        </Form>
+    {/* Search Bar */}
+    <Form onSubmit={handleSearch} className="search-form">
+      <Form.Control
+        type="text"
+        placeholder="Search by location or hospital name"
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)}
+      />
+      <Button type="submit" className="search-btn">
+        Search
+      </Button>
+    </Form>
 
-        {/* Loading */}
-        {loading && (
-          <div className="text-center mt-4">
-            <Spinner animation="border" />
-            <p>Loading.....</p>
-          </div>
-        )}
+    {/* Loading */}
+    {loading && (
+      <div className="text-center mt-4">
+        <Spinner animation="border" />
+        <p>Loading.....</p>
+      </div>
+    )}
 
-        {/* No Results */}
-        {!loading && hospitals.length === 0 && (
-          <p className="text-center mt-4">No hospitals found.</p>
-        )}
+    {/* No Results */}
+    {!loading && hospitals.length === 0 && (
+      <p className="text-center mt-4">No hospitals found.</p>
+    )}
 
-        {/* Cards */}
-        <Row className="mt-4">
-          {hospitals.map((hospital) => {
-            const imagePath = hospital.imageUrl
-              ? `http://www.graduationproject.somee.com${hospital.imageUrl.replace(
-                  /\\/g,
-                  "/"
-                )}`
-              : "https://images.unsplash.com/photo-1586773860418-d37222d8fce3";
+    {/* Cards */}
+    <Row className="mt-4">
+      {hospitals.map((hospital) => {
+        const imagePath = hospital.imageUrl
+          ? `http://www.graduationproject.somee.com${hospital.imageUrl.replace(
+              /\\/g,
+              "/"
+            )}`
+          : "https://images.unsplash.com/photo-1586773860418-d37222d8fce3";
 
-            return (
-              <Col md={4} sm={6} xs={12} key={hospital.id} className="mb-4">
-                <Card className="hospital-card h-100">
-                  <Card.Img variant="top" src={imagePath} />
+        return (
+          <Col
+            md={4}
+            sm={6}
+            xs={12}
+            key={hospital.id}
+            className="mb-4 d-flex"  
+          >
+            <Card className="hospital-card h-100 w-100">
+              <Card.Img variant="top" src={imagePath} />
 
-                  <Card.Body className="d-flex flex-column">
-                    <Card.Title>{hospital.name}</Card.Title>
+              <Card.Body className="d-flex flex-column">
+                <Card.Title>{hospital.name}</Card.Title>
 
-                    <Card.Text className="location">
-                      {hospital.address}
-                    </Card.Text>
+                <Card.Text className="location">
+                  {hospital.address}
+                </Card.Text>
 
-                    {/* Departments */}
-                    <div className="departments">
-                      {hospital.departments?.map((dept, index) => (
-                        <span key={index} className="dept-badge">
-                          {dept}
-                        </span>
-                      ))}
-                    </div>
+                {/* Departments */}
+                <div className="departments">
+                  {hospital.departments?.map((dept, index) => (
+                    <span key={index} className="dept-badge">
+                      {dept}
+                    </span>
+                  ))}
+                </div>
 
-                    {/* Rating */}
-                    <div className="rating">
-                      {[...Array(5)].map((_, index) => (
-                        <FaStar
-                          key={index}
-                          className={
-                            index < Math.round(hospital.average)
-                              ? "star filled"
-                              : "star"
-                          }
-                        />
-                      ))}
-                      <span className="rating-number">
-                        {hospital.average} ({hospital.count})
-                      </span>
-                    </div>
+                {/* Rating */}
+                <div className="rating">
+                  {[...Array(5)].map((_, index) => (
+                    <FaStar
+                      key={index}
+                      className={
+                        index < Math.round(hospital.average)
+                          ? "star filled"
+                          : "star"
+                      }
+                    />
+                  ))}
+                  <span className="rating-number">
+                    {hospital.average} ({hospital.count})
+                  </span>
+                </div>
 
-                    <p className="price">
-                      Reservation: ${hospital.reservationPrice}
-                    </p>
-                    <div className="card-buttons mt-auto">
-                      <Link
-                        to={`/book/${hospital.id}`}
-                        className="btn btn-primary btn-book"
-                      >
-                        Book Now
-                      </Link>
+                <p className="price">
+                  Reservation: ${hospital.reservationPrice}
+                </p>
 
-                      <Link
-                        to={`/hospital-details/${hospital.id}`}
-                        className="btn btn-outline-primary btn-details"
-                      >
-                        View Details
-                      </Link>
-                    </div>
-                  </Card.Body>
-                </Card>
-              </Col>
-            );
-          })}
-        </Row>
-      </Container>
-    </div>
+                {/* Buttons */}
+                <div className="card-buttons">
+                  <Link
+                    to={`/hospital/${hospital.id}/booking`}
+                    className="btn btn-primary btn-book"
+                  >
+                    Book Now
+                  </Link>
+
+                  <Link
+                    to={`/hospital/${hospital.id}`}
+                    className="btn btn-outline-primary btn-details"
+                  >
+                    View Details
+                  </Link>
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+        );
+      })}
+    </Row>
+  </Container>
+</div>
   );
 }
 

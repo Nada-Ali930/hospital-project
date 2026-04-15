@@ -97,7 +97,7 @@ export default function Home() {
             Get personalized health <br />recommendations from our AI
           </p>
 
-          <Link to="/ai-chat" className="btn w-100 home-button-3">
+          <Link to="/ai-assistant" className="btn w-100 home-button-3">
             Start Chat
           </Link>
 
@@ -165,7 +165,7 @@ export default function Home() {
               <li>Sanitized and certified equipment</li>
               <li>Home delivery available</li>
             </ul>
-            <button className="btn px-4 mt-3"><i className=" fas fa-cube pe-3 "></i> Explore Equipment</button>
+            <Link to="/rentEquipment" className="btn px-4 mt-3 rentEquip-btn"><i className=" fas fa-cube pe-3 "></i> Explore Equipment</Link>
           </div>
 
           <img
