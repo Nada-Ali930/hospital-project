@@ -28,7 +28,7 @@ export default function Login() {
 
     try {
       const response = await axios.post(
-        "http://graduationprojectapi.somee.com/api/Auth/login",
+        "https://graduationproject-production-07f0.up.railway.app/api/Auth/login",
         {
           email,
           password,
@@ -39,7 +39,7 @@ export default function Login() {
           },
         },
       );
-
+console.log("LOGIN RESPONSE:", response.data);
       const storage = remember ? localStorage : sessionStorage;
 
       storage.setItem("token", response.data.token);
@@ -54,7 +54,15 @@ export default function Login() {
         localStorage.removeItem("rememberEmail");
       }
 
-      navigate("/");
+      const role = response.data.role;
+
+if (role === "EquipmentOwner") {
+  navigate("/owner/dashboard");
+} else if (role === "Doctor") {
+  navigate("/doctor/dashboard");
+} else {
+  navigate("/");
+}
     } catch (err) {
       setError(
         err.response?.data?.title ||

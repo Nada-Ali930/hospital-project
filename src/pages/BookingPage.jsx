@@ -60,7 +60,7 @@ const BookingPage = () => {
   useEffect(() => {
     axios
       .get(
-        `http://GraduationProject.somee.com/api/Hospital/${hospitalId}/booking-details`
+        `http://graduationprojectapi.somee.com/api/Hospital/${hospitalId}/booking-details`
       )
       .then((res) => {
   setDepartments(res.data.departments);
@@ -76,6 +76,7 @@ const BookingPage = () => {
 })
       .catch((err) => console.log(err));
   }, []);
+
 const CustomDropdown = ({ options, selected, onChange, placeholder }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = React.useRef(null);
@@ -136,7 +137,7 @@ const CustomDropdown = ({ options, selected, onChange, placeholder }) => {
 
       axios
         .get(
-          `http://GraduationProject.somee.com/api/Hospital/doctor/${docId}/available-times?date=${formattedDate}`
+          `http://graduationprojectapi.somee.com/api/Hospital/doctor/${docId}/available-times?date=${formattedDate}`
         )
         .then((res) => setAvailableTimes(res.data))
         .catch((err) => console.log(err));
@@ -187,7 +188,7 @@ const CustomDropdown = ({ options, selected, onChange, placeholder }) => {
 
       axios
         .get(
-          `http://GraduationProject.somee.com/api/Hospital/doctor/${selectedDoctor}/available-times?date=${formattedDate}`
+          `http://graduationprojectapi.somee.com/api/Hospital/doctor/${selectedDoctor}/available-times?date=${formattedDate}`
         )
         .then((res) => setAvailableTimes(res.data))
         .catch((err) => console.log(err));

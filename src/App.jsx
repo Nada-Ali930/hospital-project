@@ -24,7 +24,12 @@ import VerificationCode from "./pages/VerificationCode.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
 import AiAssistant from "./pages/AiAssistant";
 import Profile from "./pages/Profile";
-
+import DoctorDashboard from "./pages/DoctorDashboard";
+import EquipmentownerBookings from "./pages/EquipmentownerBookings";
+import EquipmentownerDashboard from "./pages/EquipmentownerDashboard";
+import EquipmentownerDevices from "./pages/EquipmentownerDevices";
+import EquipmentownerAddDevice from "./pages/EquipmentownerAddDevice";
+import DoctorBookings from "./pages/DoctorBookings";
 function App() {
   let routes = createBrowserRouter([
     {
@@ -52,6 +57,12 @@ function App() {
         { path: "forget-password/veification-code/reset-password", element: <ResetPassword/> },
         { path: "ai-assistant", element: <AiAssistant /> },
         {path: "profile",  element: <Profile /> },
+        { path: "dashboard", element: <DoctorDashboard /> },
+        { path: "equipmentowner-bookings", element: <EquipmentownerBookings /> },
+        { path: "equipmentowner-dashboard", element: <EquipmentownerDashboard /> },
+        { path: "equipmentowner-devices", element: <EquipmentownerDevices /> },
+        { path: "equipmentowner-add-device", element: <EquipmentownerAddDevice /> },
+        { path: "doctor-bookings", element: <DoctorBookings /> },
         
       ]
     }

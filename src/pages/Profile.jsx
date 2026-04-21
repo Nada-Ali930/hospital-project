@@ -16,8 +16,10 @@ export default function Profile() {
     userId: ""
   });
 
-  const token = localStorage.getItem("token");
-  const api = "http://GraduationProject.somee.com/api";
+  const token =
+  localStorage.getItem("token") || sessionStorage.getItem("token");
+  console.log("TOKEN:", token);
+  const api = "http://graduationprojectapi.somee.com/api";
   const { t, i18n } = useTranslation();
 
   // ================= CustomDropdown =================
@@ -39,7 +41,6 @@ export default function Profile() {
     onChange(value);
     setIsOpen(false);
   };
-
   return (
     <div className="custom-dropdown" ref={dropdownRef} style={{ position: "relative", width: "100%" }}>
       <div
@@ -72,52 +73,83 @@ export default function Profile() {
 };
   // ================= API Calls =================
   const getProfile = async () => {
-    try {
-      const res = await axios.get(`${api}/Profile`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setProfile(res.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  try {
+    const res = await axios.get(`${api}/Profile`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setProfile({
+      ...res.data,
+      imageUrl: res.data.imageUrl
+  ? `http://graduationprojectapi.somee.com${res.data.imageUrl}`
+  : ""
+    });
+
+  } catch (err) {
+    console.log(err);
+  }
+};
+const discardChanges = () => {
+  getProfile();
+};
 
   const updateProfile = async () => {
-    try {
-      await axios.put(
-        `${api}/Profile`,
-        { ...profile, dateOfBirth: profile.dateOfBirth.split("T")[0] },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      alert("Profile Updated Successfully");
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  try {
 
-  const uploadImage = async (e) => {
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("file", file);
+    const body = {
+      name: profile.name,
+      dateOfBirth: profile.dateOfBirth
+        ? profile.dateOfBirth.split("T")[0]
+        : null,
+      gender: profile.gender,
+      phone: profile.phone,
+      email: profile.email
+    };
 
-    try {
-      const res = await axios.post(`${api}/Profile/upload-image`, formData, {
+    await axios.put(`${api}/Profile`, body, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    alert("Profile Updated Successfully");
+
+    getProfile();
+
+  } catch (err) {
+    console.log(err.response?.data || err.message);
+  }
+};
+
+ const uploadImage = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const res = await axios.post(
+      `${api}/Profile/upload-image`,
+      formData,
+      {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+          "Content-Type": "multipart/form-data"
+        }
+      }
+    );
 
-      setProfile((prev) => ({
-        ...prev,
-        imageUrl: res.data.imageUrl
-          ? `http://GraduationProject.somee.com/uploads/${res.data.imageUrl}`
-          : prev.imageUrl,
-      }));
-    } catch (err) {
-      console.log(err);
-    }
-  };
+    setProfile(prev => ({
+      ...prev,
+      imageUrl:
+        `http://graduationprojectapi.somee.com${res.data.imageUrl}`
+    }));
+
+  } catch (err) {
+    console.log(err);
+  }
+};
 
   useEffect(() => {
     getProfile();
@@ -134,10 +166,15 @@ export default function Profile() {
               <div className="profile-img-container">
                 <div className="profile-img-wrapper">
                   <img
-                    src={profile.imageUrl || "https://via.placeholder.com/120"}
-                    alt="profile"
-                    className="profile-img"
-                  />
+  src={
+    profile.imageUrl
+      ? profile.imageUrl
+      : "https://via.placeholder.com/120"
+  }
+  alt="profile"
+  className="profile-img"
+/>
+
                 </div>
                 <label className="upload-icon">
                   <i className="fa-regular fa-camera"></i>
@@ -301,9 +338,13 @@ export default function Profile() {
 
             {/* Buttons */}
             <div className="d-flex justify-content-center gap-3">
-              <Button className="btn-discard" onClick={getProfile}>
-                Discard
-              </Button>
+              <Button
+  type="button"
+  className="btn-discard"
+  onClick={discardChanges}
+>
+  Discard
+</Button>
               <Button type="button" className="btn-save" onClick={updateProfile}>
                 <i className="fa-regular fa-floppy-disk me-2"></i>
                 Save Changes
