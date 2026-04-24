@@ -1,9 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
 import axios from "axios";
-import { FaUser, FaBell, FaGlobe, FaSignOutAlt, FaBox } from "react-icons/fa";
+import { FaUser, FaBell, FaGlobe, FaSignOutAlt, FaBox, FaCamera } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
-import footerLogo from "../assets/images/footerlogo.png";
+import { NavLink, useNavigate } from "react-router-dom";
+import Footer from "./Footer";
+import {
+  FaUserMd,
+  FaChartLine,
+  FaCalendarCheck
+} from "react-icons/fa";
 
 export default function Profile() {
   const [profile, setProfile] = useState({
@@ -15,15 +21,26 @@ export default function Profile() {
     imageUrl: "",
     userId: "",
   });
+  
+  const [rentals, setRentals] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  
+  const navigate = useNavigate();
+  
+  const logout = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    navigate("/login");
+  };
 
-  // ✅ NEW: Notification Settings
   const [settings, setSettings] = useState({
     appointmentReminders: false,
     equipmentRentalAlerts: false,
   });
 
-  const token = localStorage.getItem("token");
-  const api = "http://GraduationProject.somee.com/api";
+  const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+  console.log("TOKEN:", token);
+  const api = "http://graduationprojectapi.somee.com/api";
   const { t, i18n } = useTranslation();
 
   // ================= CustomDropdown =================
@@ -38,8 +55,7 @@ export default function Profile() {
         }
       };
       document.addEventListener("mousedown", handleClickOutside);
-      return () =>
-        document.removeEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
     const handleSelect = (value) => {
@@ -48,37 +64,20 @@ export default function Profile() {
     };
 
     return (
-      <div
-        className="custom-dropdown"
-        ref={dropdownRef}
-        style={{ position: "relative", width: "100%" }}
-      >
+      <div className="custom-dropdown" ref={dropdownRef} style={{ position: "relative", width: "100%" }}>
         <div
           className="dropdown-header border d-flex justify-content-between align-items-center px-3"
           onClick={() => setIsOpen(!isOpen)}
         >
           <span>{selected || placeholder}</span>
-          <span
-            style={{
-              transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
-              transition: "0.3s",
-            }}
-          >
+          <span style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "0.3s" }}>
             ▼
           </span>
         </div>
-
         {isOpen && (
-          <div
-            className="dropdown-menu-custom position-absolute w-100 mt-1"
-            style={{ zIndex: 10 }}
-          >
+          <div className="dropdown-menu-custom position-absolute w-100 mt-1" style={{ zIndex: 10 }}>
             {options.map((option, index) => (
-              <div
-                key={index}
-                className="dropdown-item-custom"
-                onClick={() => handleSelect(option)}
-              >
+              <div key={index} className="dropdown-item-custom" onClick={() => handleSelect(option)}>
                 {option}
               </div>
             ))}
@@ -94,31 +93,59 @@ export default function Profile() {
       const res = await axios.get(`${api}/Profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setProfile(res.data);
+      setProfile({
+        ...res.data,
+        imageUrl: res.data.imageUrl ? `http://graduationprojectapi.somee.com${res.data.imageUrl}` : ""
+      });
     } catch (err) {
       console.log(err);
     }
   };
 
+  const getRentals = async () => {
+    try {
+      if (profile.userId) {
+        const res = await axios.get(`${api}/Profile/${profile.userId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setRentals(res.data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const searchRentals = async () => {
+    try {
+      if (profile.userId && searchTerm) {
+        const res = await axios.get(`${api}/Profile/search?userId=${profile.userId}&name=${searchTerm}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setRentals(res.data);
+      } else if (profile.userId) {
+        getRentals();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const discardChanges = () => {
+    getProfile();
+  };
+
   const updateProfile = async () => {
     try {
-      await axios.put(
-        `${api}/Profile`,
-        {
-          ...profile,
-          dateOfBirth: profile.dateOfBirth
-            ? profile.dateOfBirth.split("T")[0]
-            : "",
-        },
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
+      await axios.put(`${api}/Profile`, {
+        ...profile,
+        dateOfBirth: profile.dateOfBirth ? profile.dateOfBirth.split("T")[0] : "",
+      }, { headers: { Authorization: `Bearer ${token}` } });
       alert("Profile Updated Successfully");
     } catch (err) {
       console.log(err);
     }
   };
 
-  // ✅ NEW: GET SETTINGS
   const getSettings = async () => {
     try {
       const res = await axios.get(`${api}/NotificationSettings`, {
@@ -130,7 +157,6 @@ export default function Profile() {
     }
   };
 
-  // ✅ NEW: UPDATE SETTINGS
   const updateSettings = async (newSettings) => {
     try {
       await axios.put(`${api}/NotificationSettings`, newSettings, {
@@ -143,6 +169,8 @@ export default function Profile() {
 
   const uploadImage = async (e) => {
     const file = e.target.files[0];
+    if (!file) return;
+
     const formData = new FormData();
     formData.append("file", file);
 
@@ -153,22 +181,26 @@ export default function Profile() {
           "Content-Type": "multipart/form-data",
         },
       });
-
       setProfile((prev) => ({
         ...prev,
-        imageUrl: res.data.imageUrl
-          ? `http://GraduationProject.somee.com/uploads/${res.data.imageUrl}`
-          : prev.imageUrl,
+        imageUrl: `http://graduationprojectapi.somee.com${res.data.imageUrl}`,
       }));
+      alert("Image uploaded successfully");
     } catch (err) {
-      console.log(err);
+      console.log(err.response?.data || err.message);
     }
   };
 
   useEffect(() => {
     getProfile();
-    getSettings(); // ✅ NEW
+    getSettings();
   }, []);
+
+  useEffect(() => {
+    if (profile.userId) {
+      getRentals();
+    }
+  }, [profile.userId]);
 
   // ================= JSX =================
   return (
@@ -177,62 +209,73 @@ export default function Profile() {
         <Row>
           {/* Sidebar */}
           <Col md={3}>
-            <Card className="sidebar-card text-center">
-              <div className="profile-img-container">
-                <div className="profile-img-wrapper">
-                  <img
-                    src={profile.imageUrl || "https://via.placeholder.com/120"}
-                    alt="profile"
-                    className="profile-img"
-                  />
-                </div>
-
-                <label className="upload-icon">
-                  <i className="fa-regular fa-camera"></i>
-                  <input type="file" hidden onChange={uploadImage} />
-                </label>
-              </div>
-
-              <h5 className="mt-3 fw-bold">{profile.name || "Username"}</h5>
-              <p className="profile-id">
-                Patient ID : #HE-{profile.userId || "0000"}
-              </p>
-
-              <div className="menu">
-                <div className="menu-item active">
-                  <div className="icon-wrapper">
-                    <FaUser className="menu-icon" />
-                  </div>
-                  <span>{t("menuPersonal")}</span>
-                </div>
-
-                <div className="menu-item">
-                  <div className="icon-wrapper">
-                    <FaBox className="menu-icon" />
-                  </div>
-                  <span>{t("menuRentals")}</span>
-                </div>
-
-                <div className="menu-item">
-                  <div className="icon-wrapper">
-                    <FaBell className="menu-icon" />
-                  </div>
-                  <span>{t("menuNotifications")}</span>
-                </div>
-
-                <div className="menu-item">
-                  <div className="icon-wrapper">
-                    <FaGlobe className="menu-icon" />
-                  </div>
-                  <span>{t("menuLanguage")}</span>
-                </div>
-
-                <div className="menu-item logout">
-                  <FaSignOutAlt className="menu-icon" />
-                  <span>{t("logout")}</span>
-                </div>
-              </div>
-            </Card>
+           <div className="sidebar">
+               <div className="sidebar-card text-center">
+                       <div className="profile-img-container">
+                         <div className="profile-img-wrapper">
+                           <img
+                             src={profile.imageUrl || "https://randomuser.me/api/portraits/men/32.jpg"}
+                             alt="doctor"
+                             className="profile-img"
+                           />
+                         </div>
+                         <label className="upload-icon" htmlFor="profile-upload">
+             <FaCamera style={{ color: "white", fontSize: "14px" }} />
+             <input 
+               id="profile-upload"
+               type="file" 
+               hidden 
+               accept="image/*"
+               onChange={uploadImage}
+             />
+           </label>
+                       </div>
+                       <h5 className="mt-3 fw-bold">{profile.name || "Ali L."}</h5>
+                       <p className="profile-id">Patient ID : #HE-{profile.userId || "92301"}</p>
+                       <div className="menu">
+                         <NavLink 
+             to="/profile" 
+             className={({ isActive }) => isActive ? "menu-item active" : "menu-item"}
+           >
+                           <div className="icon-wrapper">
+                             <FaUserMd className="menu-icon" />
+                           </div>
+                           <span>Personal Information</span>
+                         </NavLink>
+                         <NavLink 
+             to="/rentals"
+             className={({ isActive }) => isActive ? "menu-item active" : "menu-item"}
+           >
+                           <div className="icon-wrapper">
+                             <FaBell className="menu-icon" />
+                           </div>
+                           <span>My Rentals</span>
+                         </NavLink>
+                         <NavLink 
+             to="/notifications"
+             className={({ isActive }) => isActive ? "menu-item active" : "menu-item"}
+           >
+                           <div className="icon-wrapper">
+                             <FaBell className="menu-icon" />
+                           </div>
+                           <span>Notification Settings</span>
+                         </NavLink>
+                         
+                         <div className="menu-item">
+                           <div className="icon-wrapper">
+                             <FaGlobe className="menu-icon" />
+                           </div>
+                           <span>Language</span>
+                         </div>
+                         <div className="menu-item logout" onClick={logout}>
+                           <div className="icon-wrapper">
+                             <FaSignOutAlt className="menu-icon" />
+                           </div>
+                       <span>Log out</span>
+                     </div>
+                       </div>
+                     </div>
+             </div>
           </Col>
 
           {/* Content */}
@@ -240,67 +283,99 @@ export default function Profile() {
             {/* Personal Info */}
             <Card className="content-card p-4 mb-4">
               <h4 className="text-center fw-bold mb-4">{t("personalInfo")}</h4>
-
               <Form>
                 <Form.Group className="mb-3">
                   <Form.Label>{t("name")}</Form.Label>
                   <Form.Control
                     value={profile.name}
-                    onChange={(e) =>
-                      setProfile({ ...profile, name: e.target.value })
-                    }
+                    onChange={(e) => setProfile({ ...profile, name: e.target.value })}
                   />
                 </Form.Group>
-
                 <Form.Group className="mb-3">
                   <Form.Label>{t("date")}</Form.Label>
                   <Form.Control
                     type="date"
                     value={profile.dateOfBirth?.split("T")[0]}
-                    onChange={(e) =>
-                      setProfile({ ...profile, dateOfBirth: e.target.value })
-                    }
+                    onChange={(e) => setProfile({ ...profile, dateOfBirth: e.target.value })}
                   />
                 </Form.Group>
-
                 <Form.Group className="mb-3">
                   <Form.Label>{t("gender")}</Form.Label>
                   <CustomDropdown
                     options={[t("male"), t("female")]}
                     selected={profile.gender}
                     placeholder={t("selectGender")}
-                    onChange={(value) =>
-                      setProfile({ ...profile, gender: value })
-                    }
+                    onChange={(value) => setProfile({ ...profile, gender: value })}
                   />
                 </Form.Group>
-
                 <Form.Group className="mb-3">
                   <Form.Label>{t("phone")}</Form.Label>
                   <Form.Control
                     value={profile.phone}
-                    onChange={(e) =>
-                      setProfile({ ...profile, phone: e.target.value })
-                    }
+                    onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
                   />
                 </Form.Group>
-
                 <Form.Group className="mb-4">
                   <Form.Label>{t("email")}</Form.Label>
                   <Form.Control
                     value={profile.email}
-                    onChange={(e) =>
-                      setProfile({ ...profile, email: e.target.value })
-                    }
+                    onChange={(e) => setProfile({ ...profile, email: e.target.value })}
                   />
                 </Form.Group>
               </Form>
             </Card>
 
-            {/* Notification Settings ✅ FIXED */}
+            {/* My Rentals Section - Added */}
+            <Card className="content-card p-4 mb-4">
+              <h5 className="fw-bold mb-3">My Rentals</h5>
+              <div className="d-flex mb-3">
+                <Form.Control
+                  type="text"
+                  placeholder="Search rentals..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="me-2"
+                  style={{ maxWidth: "300px" }}
+                />
+                <Button onClick={searchRentals} className="btn-save" style={{ minWidth: "100px" }}>
+                  Search
+                </Button>
+                <Button onClick={getRentals} className="btn-discard ms-2">
+                  All
+                </Button>
+              </div>
+              <div className="rentals-list">
+                {rentals.length > 0 ? (
+                  rentals.map((rental) => (
+                    <div key={rental.rentalId} className="rental-item p-3 border mb-2">
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div>
+                          <img 
+                            src={`http://graduationprojectapi.somee.com${rental.imageUrl}`} 
+                            alt={rental.equipmentName}
+                            style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "5px", marginRight: "15px" }}
+                          />
+                          <strong>{rental.equipmentName}</strong>
+                          <p className="mb-1">Total: ${rental.totalPrice}</p>
+                          <small className="text-muted">
+                            {new Date(rental.startDate).toLocaleDateString()} - {new Date(rental.endDate).toLocaleDateString()}
+                          </small>
+                        </div>
+                        <span className={`badge ${rental.status === 'Active' ? 'bg-success' : 'bg-warning'}`}>
+                          {rental.status}
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-muted text-center">No rentals found</p>
+                )}
+              </div>
+            </Card>
+
+            {/* Notification Settings */}
             <Card className="content-card p-4 mb-4">
               <h5 className="fw-bold mb-3">{t("notificationTitle")}</h5>
-
               <div className="settings-box">
                 <div className="settings-row">
                   <div className="settings-left">
@@ -312,21 +387,16 @@ export default function Profile() {
                       <p>{t("appointmentDesc")}</p>
                     </div>
                   </div>
-
                   <Form.Check
                     type="switch"
                     checked={settings.appointmentReminders}
                     onChange={(e) => {
-                      const updated = {
-                        ...settings,
-                        appointmentReminders: e.target.checked,
-                      };
+                      const updated = { ...settings, appointmentReminders: e.target.checked };
                       setSettings(updated);
                       updateSettings(updated);
                     }}
                   />
                 </div>
-
                 <div className="settings-row">
                   <div className="settings-left">
                     <div className="settings-icon">
@@ -337,15 +407,11 @@ export default function Profile() {
                       <p>{t("equipmentDesc")}</p>
                     </div>
                   </div>
-
                   <Form.Check
                     type="switch"
                     checked={settings.equipmentRentalAlerts}
                     onChange={(e) => {
-                      const updated = {
-                        ...settings,
-                        equipmentRentalAlerts: e.target.checked,
-                      };
+                      const updated = { ...settings, equipmentRentalAlerts: e.target.checked };
                       setSettings(updated);
                       updateSettings(updated);
                     }}
@@ -358,7 +424,6 @@ export default function Profile() {
             <Card className="content-card p-4 mb-4">
               <h5 className="fw-bold">{t("selectLanguage")}</h5>
               <p className="text-muted mb-3">{t("languageDesc")}</p>
-
               <div className="settings-box">
                 <div className="language-buttons">
                   <button
@@ -370,7 +435,6 @@ export default function Profile() {
                   >
                     English
                   </button>
-
                   <button
                     className={`lang-btn ${i18n.language === "ar" ? "active" : ""}`}
                     onClick={() => {
@@ -386,7 +450,7 @@ export default function Profile() {
 
             {/* Buttons */}
             <div className="d-flex justify-content-center gap-3">
-              <Button onClick={getProfile} className="btn-discard">
+              <Button onClick={discardChanges} className="btn-discard">
                 Discard
               </Button>
               <Button onClick={updateProfile} className="btn-save">
@@ -397,38 +461,7 @@ export default function Profile() {
         </Row>
       </Container>
 
-      {/* Footer */}
-      <footer className="footer mt-5">
-        <Container>
-          <Row>
-            <Col md={4}>
-              <img src={footerLogo} alt="logo" />
-              <p>Your trusted partner for healthcare solutions.</p>
-            </Col>
-
-            <Col md={2}>
-              <h6>Quick Links</h6>
-              <ul>
-                <li>Hospitals</li>
-                <li>Rent Equipment</li>
-              </ul>
-            </Col>
-
-            <Col md={3}>
-              <h6>Support</h6>
-              <ul>
-                <li>Help Center</li>
-                <li>Privacy Policy</li>
-              </ul>
-            </Col>
-
-            <Col md={3}>
-              <h6>Contact</h6>
-              <p>Email: support@MedRent.com</p>
-            </Col>
-          </Row>
-        </Container>
-      </footer>
+      <Footer />
     </div>
   );
 }

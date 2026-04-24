@@ -16,7 +16,7 @@ import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 
 const BookingPage = () => {
-   const { id } = useParams();
+  const { id } = useParams();
   const hospitalId = id;
   const navigate = useNavigate();
 
@@ -24,9 +24,10 @@ const BookingPage = () => {
   const [allDoctors, setAllDoctors] = useState([]);
   const [filteredDoctors, setFilteredDoctors] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState(null);
-
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [availableTimes, setAvailableTimes] = useState([]);
 
   const token = localStorage.getItem("token");
 
@@ -42,21 +43,22 @@ const BookingPage = () => {
     Emergency: <Activity />,
   };
 
+  const formatDateForApi = (date) => {
+    return date.toISOString().split("T")[0];
+  };
+
   /* ================= GET DATA ================= */
   useEffect(() => {
     axios
-      .get(
-        `http://GraduationProject.somee.com/api/Hospital/${hospitalId}/booking-details`
-      )
+      .get(`http://graduationprojectapi.somee.com/api/Hospital/${hospitalId}/booking-details`)
       .then((res) => {
         setDepartments(res.data.departments);
-
         const doctors = res.data.departments.flatMap((d) => d.doctors);
         setAllDoctors(doctors);
         setFilteredDoctors(doctors);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [hospitalId]);
 
   /* ================= BOOKING ================= */
   const handleBooking = async (doctorId) => {
@@ -82,15 +84,71 @@ const BookingPage = () => {
       );
 
       navigate(`/doctor-payment/${res.data.bookingId}`, {
-       state: {
+        state: {
           doctorId,
           date: selectedDate.toISOString(),
           time: "10:00",
-       },
-});
+        },
+      });
     } catch (err) {
       console.log(err);
       alert("Booking failed");
+    }
+  };
+
+  /* ================= CustomDropdown ================= */
+  const CustomDropdown = ({ options, selected, onChange, placeholder }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = React.useRef(null);
+
+    const handleSelect = (opt) => {
+      onChange(opt);
+      setIsOpen(false);
+    };
+
+    return (
+      <div className="custom-dropdown" ref={dropdownRef}>
+        <div
+          className={`dropdown-header ${isOpen ? "open" : ""}`}
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {selected || placeholder}
+          <span className="arrow">{isOpen ? "▲" : "▼"}</span>
+        </div>
+        {isOpen && (
+          <div className="dropdown-list">
+            {options.map((opt, i) => (
+              <div
+                key={i}
+                className={`dropdown-item ${selected === opt ? "selected" : ""}`}
+                onClick={() => handleSelect(opt)}
+              >
+                {opt}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  /* ================= Departments ================= */
+  const handleDepartmentClick = (dep) => {
+    setSelectedDepartment(dep.departmentId);
+    setFilteredDoctors(dep.doctors);
+  };
+
+  /* ================= Doctors ================= */
+  const handleDoctorClick = (docId) => {
+    setSelectedDoctor(docId);
+    if (selectedDate) {
+      const formattedDate = formatDateForApi(selectedDate);
+      axios
+        .get(
+          `http://graduationprojectapi.somee.com/api/Hospital/doctor/${docId}/available-times?date=${formattedDate}`
+        )
+        .then((res) => setAvailableTimes(res.data))
+        .catch((err) => console.log(err));
     }
   };
 
@@ -98,19 +156,15 @@ const BookingPage = () => {
   const getDaysInMonth = (date) => {
     const year = date.getFullYear();
     const month = date.getMonth();
-
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
-
     const days = [];
     const startDay = firstDay.getDay();
 
     for (let i = 0; i < startDay; i++) days.push(null);
-
     for (let i = 1; i <= lastDay.getDate(); i++) {
       days.push(new Date(year, month, i));
     }
-
     return days;
   };
 
@@ -129,11 +183,9 @@ const BookingPage = () => {
   /* ================= UI ================= */
   return (
     <div className="booking-wrapper container py-5">
-
       {/* ================= HEADER ================= */}
       <div className="row align-items-center mb-5">
         <div className="col-md-6">
-
           <div className="booking-title mb-3">
             <div className="back-circle">
               <i className="fa-solid fa-arrow-left"></i>
@@ -143,7 +195,6 @@ const BookingPage = () => {
 
           {/* ================= CALENDAR ================= */}
           <div className="calendar-card">
-
             <div className="calendar-header">
               <div className="month-left">
                 <span>
@@ -151,17 +202,14 @@ const BookingPage = () => {
                   {currentDate.getFullYear()}
                 </span>
               </div>
-
               <div className="month-arrows">
                 <button onClick={() => changeMonth(-1)}>◀</button>
                 <button onClick={() => changeMonth(1)}>▶</button>
               </div>
             </div>
-
             <div className="calendar-grid">
               {getDaysInMonth(currentDate).map((date, i) => {
-                const disabled = !date || isPastDate(date);
-
+                const disabled = !date || (date && isPastDate(date));
                 const selected =
                   selectedDate &&
                   date &&
@@ -174,7 +222,7 @@ const BookingPage = () => {
                       selected ? "selected" : ""
                     }`}
                     onClick={() => {
-                      if (disabled) return;
+                      if (disabled || !date) return;
                       setSelectedDate(date);
                     }}
                   >
@@ -183,10 +231,8 @@ const BookingPage = () => {
                 );
               })}
             </div>
-
           </div>
         </div>
-
         <div className="col-md-6 text-center">
           <img src={pana} className="hero-img" alt="doctor" />
         </div>
@@ -194,7 +240,6 @@ const BookingPage = () => {
 
       {/* ================= DEPARTMENTS ================= */}
       <h5 className="section-title">Available Departments</h5>
-
       <Row className="mt-3 g-3">
         {departments.map((dep) => (
           <Col xs={6} md={4} lg={2} key={dep.departmentId}>
@@ -210,7 +255,6 @@ const BookingPage = () => {
               <div className="department-icon">
                 {departmentIcons[dep.name] || <Stethoscope />}
               </div>
-
               <p className="department-name">{dep.name}</p>
             </Card>
           </Col>
@@ -219,33 +263,26 @@ const BookingPage = () => {
 
       {/* ================= DOCTORS ================= */}
       <h5 className="section-title mt-5">Available Doctors</h5>
-
       <Row className="g-4 mt-3">
         {filteredDoctors.map((doc) => (
           <Col md={4} key={doc.doctorId}>
             <Card className="doctor-card border-0 p-3 shadow-sm">
-
               <h6 className="doctor-name">{doc.name}</h6>
-
               <Button
                 className="w-100 mt-3 book-btn"
                 onClick={() => handleBooking(doc.doctorId)}
               >
                 Book Appointment
               </Button>
-
             </Card>
           </Col>
         ))}
       </Row>
-
     </div>
   );
 };
 
 export default BookingPage;
-
-
 // import React, { useEffect, useState } from "react";
 // import axios from "axios";
 // import pana from "../assets/images/pana.png";

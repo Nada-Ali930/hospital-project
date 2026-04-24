@@ -9,36 +9,45 @@ export default function AiAssistant() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
 
-//   
-const analyzeSymptoms = async () => {
+  const token = localStorage.getItem("token") || sessionStorage.getItem("token");
 
-  const fakeData = {
-    department: "Cardiology",
-    suggestedActions: [
-      "Seek medical attention within 24 hours.",
-      "Monitor any changes in your breathing.",
-      "Avoid heavy physical activity."
-    ],
-    howToUse:
-      "Describe symptoms in everyday language. Include duration, severity, or other notes.",
-    hospitals: [
-      {
-        hospitalId: 1,
-        name: "City Medical Center",
-        distanceKm: 2.5,
-        rating: 4.8
-      },
-      {
-        hospitalId: 2,
-        name: "St. Mary's Hospital",
-        distanceKm: 2.5,
-        rating: 4.6
-      }
-    ]
+  // ✅ API CONNECTED - NO OTHER CHANGES!
+  const analyzeSymptoms = async () => {
+    if (!message.trim()) return;
+
+    setLoading(true);
+    
+    try {
+      const response = await axios.post(
+        'http://www.graduationprojectapi.somee.com/api/Chat/analyze',
+        { message: message.trim() },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      // Fix image URLs from API
+      const fixedHospitals = response.data.hospitals?.map(h => ({
+        ...h,
+        imageUrl: `http://www.graduationprojectapi.somee.com${h.imageUrl || ''}`
+      })) || [];
+
+      setData({
+        ...response.data,
+        hospitals: fixedHospitals
+      });
+
+    } catch (error) {
+      console.error('AI Analysis Error:', error);
+      alert('Please login first or try again');
+      setData(null);
+    } finally {
+      setLoading(false);
+    }
   };
-
-  setData(fakeData);
-};
 
   return (
     <div className="container py-5">
@@ -71,6 +80,7 @@ const analyzeSymptoms = async () => {
       <button
         className="btn btn-Ai w-100 mb-4"
         onClick={analyzeSymptoms}
+        disabled={loading || !message.trim()}
       >
         {loading ? "Analyzing..." : "Analyze Symptoms"}
       </button>
@@ -91,9 +101,9 @@ const analyzeSymptoms = async () => {
               <div className="info-card">
 
                 <h6 className="d-flex align-items-center gap-2">
-  <img src={aiIcon} alt="" className="ai-icon"/>
-  {data.department}
-</h6>
+                  <img src={aiIcon} alt="" className="ai-icon"/>
+                  {data.department}
+                </h6>
 
                 <p>
                   Based on your symptoms, this department is the most relevant for a consultation.
@@ -109,15 +119,15 @@ const analyzeSymptoms = async () => {
               <div className="info-card">
 
                 <h6 className="d-flex align-items-center gap-2">
-  <img src={aiIcon} alt="" className="ai-icon"/>
-  Suggested Actions
-</h6>
+                  <img src={aiIcon} alt="" className="ai-icon"/>
+                  Suggested Actions
+                </h6>
 
                 {data.suggestedActions.map((action, index) => (
                   <p key={index} className="d-flex align-items-start gap-2">
-  <img src={aiIcon2} alt="" className="ai-icon2"/>
-  {action}
-</p>
+                    <img src={aiIcon2} alt="" className="ai-icon2"/>
+                    {action}
+                  </p>
                 ))}
 
               </div>
@@ -130,9 +140,9 @@ const analyzeSymptoms = async () => {
               <div className="info-card">
 
                 <h6 className="d-flex align-items-center gap-2">
-  <img src={aiIcon} alt="" className="ai-icon"/>
-  How to Use
-</h6>
+                  <img src={aiIcon} alt="" className="ai-icon"/>
+                  How to Use
+                </h6>
 
                 <p>
                   {data.howToUse}
@@ -145,36 +155,36 @@ const analyzeSymptoms = async () => {
           </div>
 
           {/* Hospitals */}
-<div className="hospital-section mt-4">
-  <h6 className="mb-3 d-flex align-items-center gap-2">
-    <img src={aiIcon} alt="" className="ai-icon"/>
-    Nearby Hospitals
-  </h6>
+          <div className="hospital-section mt-4">
+            <h6 className="mb-3 d-flex align-items-center gap-2">
+              <img src={aiIcon} alt="" className="ai-icon"/>
+              Nearby Hospitals
+            </h6>
 
-  {data.hospitals.map((hospital) => (
-    <div
-      key={hospital.hospitalId}
-      className="hospital-card p-3 d-flex flex-column align-items-start gap-2"
-    >
+            {data.hospitals.map((hospital) => (
+              <div
+                key={hospital.hospitalId}
+                className="hospital-card p-3 d-flex flex-column align-items-start gap-2"
+              >
 
-      {/* Name */}
-      <h6 className="hospital-name mb-1">{hospital.name}</h6>
+                {/* Name */}
+                <h6 className="hospital-name mb-1">{hospital.name}</h6>
 
-      {/* Distance & Rating */}
-      <small className="hospital-meta">
-        {hospital.distanceKm} miles away |{" "}
-        {hospital.rating}
-        <i className="fa-solid fa-star ms-2" style={{ color: "#FFC107" }}></i>{" "}
-        
-      </small>
+                {/* Distance & Rating */}
+                <small className="hospital-meta">
+                  {hospital.distanceKm} miles away |{" "}
+                  {hospital.rating}
+                  <i className="fa-solid fa-star ms-2" style={{ color: "#FFC107" }}></i>{" "}
+                  
+                </small>
 
-      <button className="view-btn mt-2">
-        View Details
-      </button>
+                <button className="view-btn mt-2">
+                  View Details
+                </button>
 
-    </div>
-  ))}
-</div>
+              </div>
+            ))}
+          </div>
 
         </>
       )}
