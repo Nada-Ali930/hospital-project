@@ -8,7 +8,9 @@ import upArrowIcon from "../assets/images/uparrowIcon.png";
 import { useNavigate } from "react-router-dom";
 
 export default function AddDevicePage() {
-  const [token, setToken] = useState(localStorage.getItem("token") || sessionStorage.getItem("token"));
+
+  // const [token, setToken] = useState(localStorage.getItem("token") || sessionStorage.getItem("token"));
+  
   const navigate = useNavigate();
 
   const [device, setDevice] = useState({
@@ -41,73 +43,145 @@ export default function AddDevicePage() {
     });
   };
 
-  const handleAddDevice = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
+const handleAddDevice = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setMessage("");
 
-    try {
-      // ✅ ALWAYS use EquipmentOwner credentials for this endpoint
-      const loginResponse = await axios.post(
-        "http://graduationprojectapi.somee.com/api/Auth/login",
-        {
-          email: "marwawageeh47@gmail.com",
-          password: "marwawageeh47@"
-        }
-      );
-      
-      const ownerToken = loginResponse.data.token;
-      localStorage.setItem("token", ownerToken);
-      sessionStorage.setItem("token", ownerToken);
-      setToken(ownerToken);
+  try {
+    const token =
+      localStorage.getItem("token") ||
+      sessionStorage.getItem("token");
 
-      if (!device.Name.trim() || !device.PricePerDay || !device.Image) {
-        setMessage("Please fill all required fields and select an image ❌");
-        setLoading(false);
-        return;
-      }
-
-      setMessage("Uploading...");
-
-      const endpoint = "http://graduationprojectapi.somee.com/api/EquipmentOwner/add-device";
-
-      let uploadImage = device.Image;
-      if (device.Image.size > 2 * 1024 * 1024) {
-        setMessage("Compressing image...");
-        uploadImage = await compressImage(device.Image);
-      }
-
-      const formData = new FormData();
-      formData.append("Name", device.Name.trim());
-      formData.append("Description", device.Description.trim());
-      formData.append("PricePerDay", parseFloat(device.PricePerDay));
-      formData.append("Image", uploadImage);
-
-      const res = await axios.post(endpoint, formData, {
-        headers: { 
-          Authorization: `Bearer ${ownerToken}`,
-          'Content-Type': 'multipart/form-data'
-        },
-        timeout: 45000,
-      });
-
-      setMessage(res.data.message || "Device added successfully ✅");
-      setTimeout(() => navigate("/equipmentowner-devices"), 1500);
-
-    } catch (err) {
-      console.error("Full error:", err.response?.data || err);
-
-      if (err.response?.status === 401 || err.response?.status === 403) {
-        setMessage("Access denied. Please try again ❌");
-      } else if (err.code === 'ECONNRESET' || err.code === 'ERR_NETWORK') {
-        setMessage("Server connection error ⏳");
-      } else {
-        setMessage(err.response?.data?.message || "Failed to add device ❌");
-      }
-    } finally {
+    if (!device.Name.trim() || !device.PricePerDay || isNaN(device.PricePerDay) || !device.Image) {
+      setMessage("Please fill all required fields ❌");
       setLoading(false);
+      return;
     }
-  };
+
+    setMessage("Uploading...");
+
+    const endpoint = "http://graduationprojectapi.somee.com/api/EquipmentOwner/add-device";
+
+    let uploadImage = device.Image;
+
+    if (device.Image.size > 2 * 1024 * 1024) {
+      setMessage("Compressing image...");
+      uploadImage = await compressImage(device.Image);
+    }
+
+    const formData = new FormData();
+    formData.append("Name", device.Name.trim());
+    formData.append("Description", device.Description.trim());
+    formData.append("PricePerDay", parseFloat(device.PricePerDay));
+    formData.append("Image", uploadImage);
+
+    const res = await axios.post(endpoint, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+      timeout: 45000,
+    });
+
+    setMessage(res.data.message || "Device added successfully ✅");
+
+    setTimeout(() => navigate("/equipmentowner-devices"), 1500);
+
+  } catch (err) {
+    console.error("ERROR:", err.response?.data || err);
+
+    if (err.response?.status === 401 || err.response?.status === 403) {
+      setMessage("Unauthorized ❌ (check token)");
+    } else if (err.code === "ERR_NETWORK") {
+      setMessage("Server down (Somee 😅)");
+    } else {
+      setMessage(err.response?.data?.message || "Failed ❌");
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
+//   const handleAddDevice = async (e) => {
+//     e.preventDefault();
+//     setLoading(true);
+//     setMessage("");
+
+//     try {
+//       if (!device.Name.trim() || !device.PricePerDay || !device.Image)
+//       // ✅ ALWAYS use EquipmentOwner credentials for this endpoint
+//       // const loginResponse = await axios.post(
+//       //   "http://graduationprojectapi.somee.com/api/Auth/login",
+//       //   {
+//       //     email: "marwawageeh47@gmail.com",
+//       //     password: "marwawageeh47@"
+//       //   }
+//       // );
+      
+//       // const ownerToken = loginResponse.data.token;
+//       // localStorage.setItem("token", ownerToken);
+//       // sessionStorage.setItem("token", ownerToken);
+//       // setToken(ownerToken);
+      
+//       const token =
+//   localStorage.getItem("token") ||
+//   sessionStorage.getItem("token");
+
+// //   const res = await axios.post(endpoint, formData, {
+// //   headers: { 
+// //     Authorization: `Bearer ${token}`,
+// //     'Content-Type': 'multipart/form-data'
+// //   }
+// // });
+
+//       if (!device.Name.trim() || !device.PricePerDay || !device.Image) {
+//         setMessage("Please fill all required fields and select an image ❌");
+//         setLoading(false);
+//         return;
+//       }
+
+//       setMessage("Uploading...");
+
+//       const endpoint = "http://graduationprojectapi.somee.com/api/EquipmentOwner/add-device";
+
+//       let uploadImage = device.Image;
+//       if (device.Image.size > 2 * 1024 * 1024) {
+//         setMessage("Compressing image...");
+//         uploadImage = await compressImage(device.Image);
+//       }
+
+//       const formData = new FormData();
+//       formData.append("Name", device.Name.trim());
+//       formData.append("Description", device.Description.trim());
+//       formData.append("PricePerDay", parseFloat(device.PricePerDay));
+//       formData.append("Image", uploadImage);
+
+//       const res = await axios.post(endpoint, formData, {
+//         headers: { 
+//           Authorization: `Bearer ${token}`,
+//           'Content-Type': 'multipart/form-data'
+//         },
+//         timeout: 45000,
+//       });
+
+//       setMessage(res.data.message || "Device added successfully ✅");
+//       setTimeout(() => navigate("/equipmentowner-devices"), 1500);
+
+//     } catch (err) {
+//       console.error("Full error:", err.response?.data || err);
+
+//       if (err.response?.status === 401 || err.response?.status === 403) {
+//         setMessage("Access denied. Please try again ❌");
+//       } else if (err.code === 'ECONNRESET' || err.code === 'ERR_NETWORK') {
+//         setMessage("Server connection error ⏳");
+//       } else {
+//         setMessage(err.response?.data?.message || "Failed to add device ❌");
+//       }
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
 
   return (
     <>

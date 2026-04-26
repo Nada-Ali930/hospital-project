@@ -144,7 +144,7 @@ const OwnerSidebar = () => {
             <div className="icon-wrapper">
               <FaBell className="menu-icon" />
             </div>
-            <span>Notification Settings</span>
+            <span>Notification</span>
           </NavLink>
 
           <NavLink

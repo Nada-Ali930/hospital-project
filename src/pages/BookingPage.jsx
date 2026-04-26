@@ -85,6 +85,7 @@ const BookingPage = () => {
 
       navigate(`/doctor-payment/${res.data.bookingId}`, {
         state: {
+          bookingId: res.data.bookingId,
           doctorId,
           date: selectedDate.toISOString(),
           time: "10:00",

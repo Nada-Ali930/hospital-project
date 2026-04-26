@@ -14,7 +14,7 @@ function MyRentals() {
 
   
   const getUserIdFromToken = () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token")|| sessionStorage.getItem("token");;
     if (!token) return null;
     try {
       const payload = JSON.parse(atob(token.split(".")[1]));
@@ -25,7 +25,7 @@ function MyRentals() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token")|| sessionStorage.getItem("token");
     const userId = getUserIdFromToken();
 
     if (!token || !userId) {
