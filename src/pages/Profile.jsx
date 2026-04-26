@@ -5,11 +5,13 @@ import { FaUser, FaBell, FaGlobe, FaSignOutAlt, FaBox, FaCamera } from "react-ic
 import { useTranslation } from "react-i18next";
 import { NavLink, useNavigate } from "react-router-dom";
 import Footer from "./Footer";
+import OwnerSidebar from "./OwnerSidebar";
 import {
   FaUserMd,
   FaChartLine,
   FaCalendarCheck
 } from "react-icons/fa";
+import DoctorSidebar from "./DoctorSidebar";
 
 export default function Profile() {
   const [profile, setProfile] = useState({
@@ -21,12 +23,20 @@ export default function Profile() {
     imageUrl: "",
     userId: "",
   });
+
   
-  const [rentals, setRentals] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  
+  // const [rentals, setRentals] = useState([]);
+  // const [searchTerm, setSearchTerm] = useState("");
+
+
   
   const navigate = useNavigate();
   
+  const role =
+  localStorage.getItem("role") ||
+  sessionStorage.getItem("role");
+
   const logout = () => {
     localStorage.clear();
     sessionStorage.clear();
@@ -62,6 +72,7 @@ export default function Profile() {
       onChange(value);
       setIsOpen(false);
     };
+
 
     return (
       <div className="custom-dropdown" ref={dropdownRef} style={{ position: "relative", width: "100%" }}>
@@ -115,20 +126,20 @@ export default function Profile() {
     }
   };
 
-  const searchRentals = async () => {
-    try {
-      if (profile.userId && searchTerm) {
-        const res = await axios.get(`${api}/Profile/search?userId=${profile.userId}&name=${searchTerm}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setRentals(res.data);
-      } else if (profile.userId) {
-        getRentals();
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  // const searchRentals = async () => {
+  //   try {
+  //     if (profile.userId && searchTerm) {
+  //       const res = await axios.get(`${api}/Profile/search?userId=${profile.userId}&name=${searchTerm}`, {
+  //         headers: { Authorization: `Bearer ${token}` },
+  //       });
+  //       setRentals(res.data);
+  //     } else if (profile.userId) {
+  //       getRentals();
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   const discardChanges = () => {
     getProfile();
@@ -209,6 +220,13 @@ export default function Profile() {
         <Row>
           {/* Sidebar */}
           <Col md={3}>
+          {role === "EquipmentOwner" ? (
+               <OwnerSidebar />
+            ) :
+            role === "Doctor" ? (
+               <DoctorSidebar />
+            ) : (
+
            <div className="sidebar">
                <div className="sidebar-card text-center">
                        <div className="profile-img-container">
@@ -258,7 +276,7 @@ export default function Profile() {
                            <div className="icon-wrapper">
                              <FaBell className="menu-icon" />
                            </div>
-                           <span>Notification Settings</span>
+                           <span>Notification</span>
                          </NavLink>
                          
                          <div className="menu-item">
@@ -276,6 +294,7 @@ export default function Profile() {
                        </div>
                      </div>
              </div>
+            )}
           </Col>
 
           {/* Content */}
@@ -326,7 +345,7 @@ export default function Profile() {
             </Card>
 
             {/* My Rentals Section - Added */}
-            <Card className="content-card p-4 mb-4">
+            {/* <Card className="content-card p-4 mb-4">
               <h5 className="fw-bold mb-3">My Rentals</h5>
               <div className="d-flex mb-3">
                 <Form.Control
@@ -371,7 +390,7 @@ export default function Profile() {
                   <p className="text-muted text-center">No rentals found</p>
                 )}
               </div>
-            </Card>
+            </Card> */}
 
             {/* Notification Settings */}
             <Card className="content-card p-4 mb-4">

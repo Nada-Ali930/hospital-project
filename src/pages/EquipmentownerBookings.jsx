@@ -10,8 +10,19 @@ const api = axios.create({
   baseURL: "http://graduationprojectapi.somee.com/api",
 });
 
+// api.interceptors.request.use((config) => {
+//   const token = localStorage.getItem("token");
+//   if (token) {
+//     config.headers.Authorization = `Bearer ${token}`;
+//   }
+//   return config;
+// });
+
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
+  const token =
+    localStorage.getItem("token") ||
+    sessionStorage.getItem("token");
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -37,7 +48,7 @@ export default function OwnerBookings() {
 
       const res = await api.get("/EquipmentOwner/bookings", {
         params: {
-          status: status || "booked",
+          status: status || "",
           search: search || "",
         },
       });
@@ -65,6 +76,10 @@ export default function OwnerBookings() {
       setLoadingId(null);
     }
   };
+
+  useEffect(() => {
+  fetchBookings();
+}, []);
 
   // ================= DEBOUNCE =================
   useEffect(() => {

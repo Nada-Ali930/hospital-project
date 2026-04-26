@@ -20,7 +20,10 @@ import { FaStar } from "react-icons/fa";
 
 export default function EquipmentownerDevices() {
   const [isAuth, setIsAuth] = useState(false);
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  // const [token, setToken] = useState(localStorage.getItem("token"));
+  const [token, setToken] = useState(
+  localStorage.getItem("token") || sessionStorage.getItem("token")
+);
   const [devices, setDevices] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
@@ -114,23 +117,44 @@ export default function EquipmentownerDevices() {
     }
   };
 
-  // Check auth and fetch devices on mount/update
+
+
+useEffect(() => {
+  const savedToken =
+    localStorage.getItem("token") ||
+    sessionStorage.getItem("token");
+
+  if (savedToken) {
+    setToken(savedToken);
+    setIsAuth(true);
+    getDevices();
+  }
+}, []);
+
   useEffect(() => {
-    if (token) {
-      // Verify token is valid for EquipmentOwner
-      API.get("/EquipmentOwner/devices")
-        .then(() => {
-          setIsAuth(true);
-          getDevices();
-        })
-        .catch(() => {
-          // Invalid token, show login
-          localStorage.removeItem("token");
-          setToken(null);
-          setIsAuth(false);
-        });
-    }
-  }, [token]);
+  if (token) {
+    setIsAuth(true);
+    getDevices();
+  }
+}, [token]);
+
+  // Check auth and fetch devices on mount/update
+  // useEffect(() => {
+  //   if (token) {
+  //     // Verify token is valid for EquipmentOwner
+  //     API.get("/EquipmentOwner/devices")
+  //       .then(() => {
+  //         setIsAuth(true);
+  //         getDevices();
+  //       })
+  //       .catch(() => {
+  //         // Invalid token, show login
+  //         localStorage.removeItem("token");
+  //         setToken(null);
+  //         setIsAuth(false);
+  //       });
+  //   }
+  // }, [token]);
 
   const getStatusStyle = (status) => {
     const normalizedStatus = status === "Avaliable" ? "Available" : status;
@@ -143,61 +167,61 @@ export default function EquipmentownerDevices() {
   };
 
   // ================= LOGIN UI =================
-  if (!isAuth) {
-    return (
-      <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
-        <Card style={{ width: 400, padding: 30, borderRadius: 20, boxShadow: "0 10px 30px rgba(0,0,0,0.1)" }}>
-          <Card.Body className="text-center">
-            <h4 className="mb-4">Equipment Owner Login</h4>
-            <p className="text-muted mb-4 small">
-              Use one of these accounts:
-              <br />
-              <strong>marwawageeh47@gmail.com</strong> / marwawageeh47@
-              <br />
-              <strong>mafam764@gmail.com</strong> / mafam764@
-              <br />
-              <strong>Hadeer12@gmail.com</strong> / Hadeer12@
-            </p>
+  // if (!isAuth) {
+  //   return (
+  //     <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
+  //       <Card style={{ width: 400, padding: 30, borderRadius: 20, boxShadow: "0 10px 30px rgba(0,0,0,0.1)" }}>
+  //         <Card.Body className="text-center">
+  //           <h4 className="mb-4">Equipment Owner Login</h4>
+  //           <p className="text-muted mb-4 small">
+  //             Use one of these accounts:
+  //             <br />
+  //             <strong>marwawageeh47@gmail.com</strong> / marwawageeh47@
+  //             <br />
+  //             <strong>mafam764@gmail.com</strong> / mafam764@
+  //             <br />
+  //             <strong>Hadeer12@gmail.com</strong> / Hadeer12@
+  //           </p>
             
-            {loginError && (
-              <Alert variant="danger" className="mb-3">{loginError}</Alert>
-            )}
+  //           {loginError && (
+  //             <Alert variant="danger" className="mb-3">{loginError}</Alert>
+  //           )}
             
-            <Form onSubmit={handleLogin}>
-              <Form.Control
-                type="email"
-                placeholder="Email"
-                className="mb-3 rounded-pill"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={loginLoading}
-                required
-              />
-              <Form.Control
-                type="password"
-                placeholder="Password"
-                className="mb-4 rounded-pill"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={loginLoading}
-                required
-              />
-              <Button className="w-100 rounded-pill py-2 fw-bold" type="submit" disabled={loginLoading}>
-                {loginLoading ? (
-                  <>
-                    <Spinner animation="border" size="sm" className="me-2" />
-                    Logging in...
-                  </>
-                ) : (
-                  "Login"
-                )}
-              </Button>
-            </Form>
-          </Card.Body>
-        </Card>
-      </div>
-    );
-  }
+  //           <Form onSubmit={handleLogin}>
+  //             <Form.Control
+  //               type="email"
+  //               placeholder="Email"
+  //               className="mb-3 rounded-pill"
+  //               value={email}
+  //               onChange={(e) => setEmail(e.target.value)}
+  //               disabled={loginLoading}
+  //               required
+  //             />
+  //             <Form.Control
+  //               type="password"
+  //               placeholder="Password"
+  //               className="mb-4 rounded-pill"
+  //               value={password}
+  //               onChange={(e) => setPassword(e.target.value)}
+  //               disabled={loginLoading}
+  //               required
+  //             />
+  //             <Button className="w-100 rounded-pill py-2 fw-bold" type="submit" disabled={loginLoading}>
+  //               {loginLoading ? (
+  //                 <>
+  //                   <Spinner animation="border" size="sm" className="me-2" />
+  //                   Logging in...
+  //                 </>
+  //               ) : (
+  //                 "Login"
+  //               )}
+  //             </Button>
+  //           </Form>
+  //         </Card.Body>
+  //       </Card>
+  //     </div>
+  //   );
+  // }
 
   // ================= DEVICES UI =================
   return (

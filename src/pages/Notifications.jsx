@@ -9,20 +9,43 @@ export default function Notifications() {
   const token = localStorage.getItem("token");
   const api = "http://GraduationProject.somee.com/api";
 
+  // const getNotifications = async () => {
+  //   try {
+  //     const res = await axios.get(`${api}/Notification/my`, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+  //     setNotifications(res.data);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
   const getNotifications = async () => {
-    try {
-      const res = await axios.get(`${api}/Notification/my`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setNotifications(res.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  try {
+    const token =
+      localStorage.getItem("token") || sessionStorage.getItem("token");
+
+    const res = await axios.get(`${api}/Notification/my`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setNotifications(res.data);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+  // useEffect(() => {
+  //   getNotifications();
+  // }, []);
 
   useEffect(() => {
+  const token =
+    localStorage.getItem("token") || sessionStorage.getItem("token");
+
+  if (token) {
     getNotifications();
-  }, []);
+  }
+}, []);
 
   return (
     <div className="notifications-page">
